@@ -1,38 +1,139 @@
-.App {
-  text-align: center;
+/* Header */
+.headerLazada{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 10;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logo{
+  width: 100px;
+  height: 80px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Side bar */
+.aside-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: flex-start;
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  top: 100px;
+  left: 0;
+  z-index: 1;
+  overflow: auto;
+  border-right: 1px solid #e0e0e0;
+}
+.aside-bar .aside-bar-container {
+  background: white;
+}
+.aside-bar .p1 {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 15px;
+  font-weight: bolder;
+  user-select: none;
 }
 
-.App-link {
-  color: #61dafb;
+.aside-bar .aside-bar-container {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.aside-bar .aside-bar-container .isActive {
+  cursor: pointer;
+  border: 1px solid #008EC0;
+}
+.aside-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.aside-bar .aside-bar-container .iconTag, .aside-bar .aside-bar-container p {
+  color: #008EC0;
+  margin: 5px;
+}
+
+.aside-bar .aside-bar-container .navLink {
+  text-decoration: none;
+}
+.aside-bar .aside-bar-container .navLink:hover {
+  cursor: pointer;
+  border: 1px solid #008EC0;
+}
+
+/* Seller pages */
+
+.products {
+  /* position: absolute; */
+  margin-left: 250px;
+  margin-top: 130px;
+  padding: 20px;
+  padding-top: 20px;
+  width: 70vw;
+  /* overflow-y: scroll; */
+}
+
+.products .titlepage h2 {
+  width: 300px;
+  border-bottom: 2px solid #008EC0;
+  margin-bottom: 20px;
+  color: #008EC0;
+  text-align: center;
+}
+
+.product-card {
+  margin: 5px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  border: 2px solid #008EC0;
+  border-radius: 5px;
+  box-shadow: 2px 2px 14px #e0e0e0;
+}
+
+.product-img {
+  height: 150px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Seller product table */
+.actionBtn {
+  padding: 5px;
+  border: transparent;
+  border-radius: 5px;
+  margin: 1px;
+  background-color:#008EC0;
+}
+
+.actionBtn:hover {
+  opacity: 0.8;
+}
+
+.editBtn {
+  background-color:#008EC0;
+}
+
+.deleteBtn {
+  background-color: red;
+}
+
+/* Input form */
+.inputForm{
+  position: relative;
+}
+
+@media screen and (max-width: 780px) {
+  .aside-bar {
+    width: 150px;
   }
-  to {
-    transform: rotate(360deg);
+  .products {
+    margin-left: 150px;
   }
 }
