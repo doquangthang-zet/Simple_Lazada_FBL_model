@@ -1,11 +1,11 @@
-export default function WarehouseCreate() {
+export default function WarehouseEdit() {
   return (
     <div className="products">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="titlepage">
-              <h2>New Warehouse</h2>
+              <h2>Edit Warehouse</h2>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function WarehouseCreate() {
           </div>
 
           <button type="submit" class="actionBtn">
-            Submit
+            Update
           </button>
         </form>
       </div>

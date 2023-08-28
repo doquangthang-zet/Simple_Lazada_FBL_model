@@ -19,12 +19,7 @@ export default function CategoryList() {
             <tr>
               <th scope="col">Id</th>
               <th scope="col">Name</th>
-              <th scope="col">Description</th>
-              <th scope="col">Price</th>
-              <th scope="col">Image</th>
-              <th scope="col">Length</th>
-              <th scope="col">Width</th>
-              <th scope="col">Height</th>
+              <th scope="col">Parent Category</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
@@ -33,13 +28,8 @@ export default function CategoryList() {
               <th scope="row">1</th>
               <td>Mark</td>
               <td>Otto</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
               <td>
-                <NavLink to="/seller/editProduct">
+                <NavLink to="/admin/editCategory">
                   <button type="button" class="actionBtn editBtn">
                     Edit
                   </button>
@@ -54,19 +44,17 @@ export default function CategoryList() {
               <th scope="row">2</th>
               <td>Jacob</td>
               <td>Thornton</td>
-              <td>@fat</td>
             </tr>
             <tr>
               <th scope="row">3</th>
               <td>Larry the Bird</td>
               <td>@twitter</td>
-              <td>sdlfslskfsklfnslm.,cmlskfsldfsknclklsfkjlamdmclasdd</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <NavLink to="/seller/newProduct">
+      <NavLink to="/admin/newCategory">
         <button type="button" class="actionBtn">
           Create
         </button>

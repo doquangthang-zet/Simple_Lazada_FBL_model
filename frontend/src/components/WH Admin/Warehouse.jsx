@@ -34,7 +34,7 @@ export default function WarehouseList() {
               <td>@mdo</td>
               <td>@mdo</td>
               <td>
-                <NavLink to="/seller/editProduct">
+                <NavLink to="/admin/editWarehouse">
                   <button type="button" class="actionBtn editBtn">
                     Edit
                   </button>
@@ -61,7 +61,7 @@ export default function WarehouseList() {
         </table>
       </div>
 
-      <NavLink to="/seller/newProduct">
+      <NavLink to="/admin/newWarehouse">
         <button type="button" class="actionBtn">
           Create
         </button>
