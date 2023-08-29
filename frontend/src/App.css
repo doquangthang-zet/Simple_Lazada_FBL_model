@@ -127,12 +127,8 @@
 /* Customer Page*/
 .homepage {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 20px;
-}
-
-.card-text .card-title {
-  color: black;
 }
 
 /* Input form */

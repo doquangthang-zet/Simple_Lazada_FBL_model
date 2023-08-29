@@ -1,13 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+
 
 const CustomerPage = () => {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
+    const [allCate, setAllCate] = useState([]);
+    const [selectedCate, setSelectedCate] = useState();
+    var defaultCate = [
+        {name: 'Groceries', category: 'Groceries'},
+        {name: 'Fashion', category: 'Fashion'},
+        {name: 'Beauty', category: 'Beauty'},
+        {name: 'Electronics', category: 'Electronics'},
+        {name: 'Kitchen', category: 'Kitchen'},
+        {name: 'Furnitures', category: 'Furnitures'},
+        {name: 'Sports', category: 'Sports'},
+        {name: 'Fruits', category:'Fruits'}
+    ]
+
+    useEffect(() => {
+        setAllCate(defaultCate)
+    },[])
+
+    function handleCateChange(e) {
+        setSelectedCate(e.target.value)
+    }
     return (
         <div className='products'>
             <div class = "container">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="homepage">
+                        <div class="homepage btn-group" role="group">
+                            
                             <button type="button" class="btn btn-outline-info">Groceries 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
