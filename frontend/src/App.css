@@ -124,6 +124,17 @@
   background-color: red;
 }
 
+/* Customer Page*/
+.homepage {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card-text .card-title {
+  color: black;
+}
+
 /* Input form */
 .inputForm{
   position: relative;
