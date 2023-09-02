@@ -18,7 +18,7 @@ export default function WarehouseCreate() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:4000/createWarehouse", values)
+    axios.post("http://localhost:4000/createWarehouse", warehouse)
     .then(res => {
       if(res.data.Status === "Success") {
         navigate('/warehouse')
@@ -41,7 +41,7 @@ export default function WarehouseCreate() {
       </div>
 
       <div className="inputForm">
-        <form>
+        <form on onSubmit={handleSubmit}>
           <div class="mb-3">
             <label for="warehouseName" class="form-label">
               Warehouse Name
