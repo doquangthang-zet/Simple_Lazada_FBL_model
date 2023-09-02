@@ -1,4 +1,33 @@
+import { React, useState, useEffect } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+
 export default function WarehouseCreate() {
+
+  const [warehouse, setWarehouse] = useState({
+    warehouseName: '',
+    warehouseAddress: '',
+    warehouseVolume: 0
+  });
+  const navigate = useNavigate();
+
+  const handleChange = ({ currentTarget: input }) => {
+    setWarehouse( { ...warehouse, [input.name]: input.value });
+    console.log(warehouse)
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios.post("http://localhost:4000/createWarehouse", values)
+    .then(res => {
+      if(res.data.Status === "Success") {
+        navigate('/warehouse')
+      } else {
+        alert("Error")
+      }
+    });
+  }
+
   return (
     <div className="products">
       <div class="container">
@@ -17,14 +46,30 @@ export default function WarehouseCreate() {
             <label for="warehouseName" class="form-label">
               Warehouse Name
             </label>
-            <input type="text" class="form-control" id="warehouseName" />
+            <input
+              type="text"
+              class="form-control"
+              id="warehouseName"
+              name="warehouseName"
+              value={warehouse.warehouseName}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div class="mb-3">
             <label for="warehouseAddress" class="form-label">
               Warehouse Address
             </label>
-            <input type="text" class="form-control" id="warehouseAddress" />
+            <input
+              type="text"
+              class="form-control"
+              id="warehouseAddress"
+              name="warehouseAddress"
+              value={warehouse.warehouseAddress}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div class="mb-3">
@@ -35,7 +80,11 @@ export default function WarehouseCreate() {
               type="number"
               class="form-control"
               id="warehouseVolume"
+              name="warehouseVolume"
               placeholder="Enter volume"
+              value={warehouse.warehouseVolume}
+              onChange={handleChange}
+              required
             />
           </div>
 
@@ -46,7 +95,10 @@ export default function WarehouseCreate() {
             <input type="file" class="form-control" id="warehouseImage" />
           </div>
 
-          <button type="submit" class="actionBtn">
+          <button
+            type="submit"
+            class="actionBtn"
+          >
             Submit
           </button>
         </form>
