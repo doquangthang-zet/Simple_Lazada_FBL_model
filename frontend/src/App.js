@@ -7,6 +7,7 @@ import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import SellerRegister from './components/AuthPage/SellerRegister';
 import AdminRegister from './components/AuthPage/AdminRegister';
+import WHAdmin from './components/WH Admin/WHAdmin';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path='/sellerRegister' element={<SellerRegister />} />
         <Route path='/adminRegister' element={<AdminRegister />} />
         <Route path='/seller/*' element={<Seller />} />
+        <Route path="/admin/*" element={<WHAdmin />} />
       </Routes>
     </div>
   );

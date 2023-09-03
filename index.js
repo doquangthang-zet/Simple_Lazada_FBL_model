@@ -1,3 +1,4 @@
+
 const express = require('express')
 const bodyParser = require("body-parser")
 const mysql = require("mysql")
@@ -22,6 +23,7 @@ app.use(cors({
     methods: ["GET", "POST"],
     credentials: true
 }));
+
 app.use(cookieParser());
 
 //create a connection to mongodb
@@ -30,6 +32,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 
 //Connect to mysql
 const connection = mysql.createConnection({
+
     host: "localhost",
     user: "root",
     password: "",
@@ -112,6 +115,9 @@ app.get("/logout", (req, res) => {
     return res.json({Status: "Success"})
 })
 
+
 app.listen(port, () => {
-    console.log(`Listen to the port ${port}`)
-})
+  console.log(`Listen to the port ${port}`);
+});
+
+app.post("/createWarehouse")
