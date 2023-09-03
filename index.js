@@ -5,11 +5,15 @@ const cors = require("cors")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
+const mongoose = require("mongoose");
 
 const app = express();
 const port = 4000
 const salt = 10;
 
+const mongodb_URL = "mongodb+srv://lazada:lazada@cluster0.t3zabpy.mongodb.net/?retryWrites=true&w=majority"
+
+app.use(cors())
 app.use(express.static('public'))
 app.use(express.json())
 // app.use(bodyParser.urlencoded({extended:true}))
@@ -19,6 +23,10 @@ app.use(cors({
     credentials: true
 }));
 app.use(cookieParser());
+
+//create a connection to mongodb
+mongoose.connect(mongodb_URL);
+mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("error", (err) => console.log("ERROR: " + err))
 
 //Connect to mysql
 const connection = mysql.createConnection({
