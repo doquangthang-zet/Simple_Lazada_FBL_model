@@ -5,27 +5,24 @@ import { Link, useNavigate } from "react-router-dom";
 export default function WarehouseCreate() {
 
   const [warehouse, setWarehouse] = useState({
-    warehouseName: '',
-    warehouseAddress: '',
-    warehouseVolume: 0
+    wId: '',
+    wName: '',
+    address: '',
+    volume: 0
   });
   const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
     setWarehouse( { ...warehouse, [input.name]: input.value });
-    console.log(warehouse)
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:4000/createWarehouse", warehouse)
-    .then(res => {
-      if(res.data.Status === "Success") {
-        navigate('/warehouse')
-      } else {
-        alert("Error")
-      }
-    });
+    try {
+      await axios.post("http://localhost:4000/createWarehouse", warehouse)
+      navigate("/admin/warehouse");
+    } catch (err) {
+    } 
   }
 
   return (
@@ -43,62 +40,67 @@ export default function WarehouseCreate() {
       <div className="inputForm">
         <form on onSubmit={handleSubmit}>
           <div class="mb-3">
-            <label for="warehouseName" class="form-label">
+            <label for="wId" class="form-label">
+              Warehouse ID
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="wId"
+              name="wId"
+              value={warehouse.wId}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="wName" class="form-label">
               Warehouse Name
             </label>
             <input
               type="text"
               class="form-control"
-              id="warehouseName"
-              name="warehouseName"
-              value={warehouse.warehouseName}
+              id="wName"
+              name="wName"
+              value={warehouse.wName}
               onChange={handleChange}
               required
             />
           </div>
 
           <div class="mb-3">
-            <label for="warehouseAddress" class="form-label">
+            <label for="address" class="form-label">
               Warehouse Address
             </label>
             <input
               type="text"
               class="form-control"
-              id="warehouseAddress"
-              name="warehouseAddress"
-              value={warehouse.warehouseAddress}
+              id="address"
+              name="address"
+              value={warehouse.address}
               onChange={handleChange}
               required
             />
           </div>
 
           <div class="mb-3">
-            <label for="warehouseVolume" class="form-label">
+            <label for="volume" class="form-label">
               Warehouse Volume
             </label>
             <input
               type="number"
               class="form-control"
-              id="warehouseVolume"
-              name="warehouseVolume"
+              id="volume"
+              name="volume"
               placeholder="Enter volume"
-              value={warehouse.warehouseVolume}
+              value={warehouse.volume}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div class="mb-3">
-            <label for="warehouseImage" class="form-label">
-              Warehouse Image
-            </label>
-            <input type="file" class="form-control" id="warehouseImage" />
-          </div>
-
-          <button
-            type="submit"
-            class="actionBtn"
-          >
+          <button type="submit" class="actionBtn">
             Submit
           </button>
         </form>

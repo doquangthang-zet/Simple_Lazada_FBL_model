@@ -1,6 +1,28 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function WarehouseList() {
+  const [warehouse, setWarehouse] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/warehouse`)
+      .then((res) => res.json())
+      .then((data) => {
+        setWarehouse(data);
+      });
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete("http://localhost:4000/deleteWarehouse/" + id);
+      window.location.reload();
+    } catch (err) {   
+      console.log(err)
+    }
+  }
+
   return (
     <div className="products">
       <div class="container">
@@ -21,42 +43,30 @@ export default function WarehouseList() {
               <th scope="col">Name</th>
               <th scope="col">Address</th>
               <th scope="col">Volume</th>
-              <th scope="col">Current Stock</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-              <td>
-                <NavLink to="/admin/editWarehouse">
-                  <button type="button" class="actionBtn editBtn">
-                    Edit
-                  </button>
-                </NavLink>
+            {warehouse.map((item) => (
+              <tr>
+                <th> {item.wId} </th>
+                <td> {item.wName} </td>
+                <td> {item.address} </td>
+                <td> {item.volume} </td>
+                <td>
+                  <NavLink to={`/admin/editWarehouse/${item.wId}`}  
+                  >
+                    <button type="button" class="actionBtn editBtn">
+                      Edit
+                    </button>
+                  </NavLink>
 
-                <button type="button" class="actionBtn deleteBtn">
-                  Delete
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Larry the Bird</td>
-              <td>@twitter</td>
-              <td>sdlfslskfs</td>
-            </tr>
+                  <button type="button" class="actionBtn deleteBtn" onClick={() => handleDelete(item.wId)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
