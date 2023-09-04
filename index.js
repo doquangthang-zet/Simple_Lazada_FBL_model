@@ -16,7 +16,7 @@ const mongodb_URL = "mongodb+srv://lazada:lazada@cluster0.t3zabpy.mongodb.net/?r
 
 app.use(cors())
 app.use(express.static('public'))
-app.use(express.json())
+app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extended:true}))
 app.use(cors({
     origin: ["http://localhost:3000"],
@@ -115,9 +115,13 @@ app.get("/logout", (req, res) => {
     return res.json({Status: "Success"})
 })
 
+//Album route
+const cateRoute = require("./routes/categories"); 
+app.use("/api/category/", cateRoute);
+
 
 app.listen(port, () => {
   console.log(`Listen to the port ${port}`);
 });
 
-app.post("/createWarehouse")
+// app.post("/createWarehouse")

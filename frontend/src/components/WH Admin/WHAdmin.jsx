@@ -21,7 +21,7 @@ export default function WHAdmin() {
           <Route path="/newWarehouse" element={<WarehouseCreate />} />
           <Route path="/editWarehouse" element={<WarehouseEdit />} />
           <Route path="/newCategory" element={<CategoryCreate />} />
-          <Route path="/editCategory" element={<CategoryEdit />} />
+          <Route path="/editCategory/:id" element={<CategoryEdit />} />
         </Routes>
       </div>
     </div>
