@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function WarehouseCreate() {
 
   const [warehouse, setWarehouse] = useState({
-    wId: '',
     wName: '',
     address: '',
     volume: 0
@@ -39,20 +38,6 @@ export default function WarehouseCreate() {
 
       <div className="inputForm">
         <form on onSubmit={handleSubmit}>
-          <div class="mb-3">
-            <label for="wId" class="form-label">
-              Warehouse ID
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              id="wId"
-              name="wId"
-              value={warehouse.wId}
-              onChange={handleChange}
-              required
-            />
-          </div>
 
           <div class="mb-3">
             <label for="wName" class="form-label">

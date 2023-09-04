@@ -6,7 +6,7 @@ import {  useNavigate, useParams } from "react-router-dom";
 export default function  WarehouseEdit() {
   const [warehouse, setWarehouse] = useState(
     {
-      wId: "",
+      wId: 0,
       wName: "",
       address: "",
       volume: 0,
@@ -52,7 +52,6 @@ export default function  WarehouseEdit() {
 
       <div className="inputForm">
         <form>
-
           <div class="mb-3">
             <label for="wName" class="form-label">
               Warehouse Name
