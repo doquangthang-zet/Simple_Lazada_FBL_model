@@ -110,6 +110,7 @@ app.listen(port, () => {
   console.log(`Listen to the port ${port}`);
 });
 
+
 // warehouse routes
 
 // get warehouse list
@@ -186,11 +187,13 @@ app.get("/getWarehouseProduct/:id", (req, res) => {
 })
 
 // move product to new warehouse
-app.put("/moveProduct", (req, res) => {
-  const values = [req.body.id, req.body.warehouse_id]
+app.put("/moveProduct:id", (req, res) => {
+  const values = [req.params.id, req.body.id, req.body.warehouse_id, req.body.product_id]
   const q = "CALL moveProduct(?, ?)"
   connection.query(q, values, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   }); 
 })
+
+// get all product of a seller
