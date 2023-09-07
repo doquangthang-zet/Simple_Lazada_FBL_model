@@ -1,6 +1,41 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { deleteCateById, getAllCates } from "../../api/app";
+import { withSwal } from 'react-sweetalert2';
 
-export default function CategoryList() {
+function CategoryList({swal})  {
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    getAllCates().then(res => {
+      setCategories(res.cate)
+      console.log(res)
+    })
+  }, [])
+
+  function fetchCategories() {
+    getAllCates().then(res => {
+      setCategories(res.cate)
+    })
+  }
+
+  function deleteCate(cate) {
+    swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete ${cate.name}`,
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Yes, Delete!",
+      reverseButtons: true,
+      confirmButtonColor: '#d55',
+    }).then(result => {
+      if (result.isConfirmed) {
+        deleteCateById(cate._id)
+        fetchCategories()
+      }
+        console.log({result})
+    });
+  }
   return (
     <div className="products">
       <div class="container">
@@ -24,32 +59,24 @@ export default function CategoryList() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>
-                <NavLink to="/admin/editCategory">
-                  <button type="button" class="actionBtn editBtn">
-                    Edit
-                  </button>
-                </NavLink>
+            {categories.length > 0 && categories.map(cate => (
+              <tr>
+                <th scope="row">1</th>
+                <td>{cate.name}</td>
+                <td>{cate?.parent?.name}</td>
+                <td>
+                  <NavLink to={"/admin/editCategory/" + cate._id}>
+                    <button type="button" class="actionBtn editBtn">
+                      Edit
+                    </button>
+                  </NavLink>
 
-                <button type="button" class="actionBtn deleteBtn">
-                  Delete
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+                  <button type="button" class="actionBtn deleteBtn" onClick={() => deleteCate(cate)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -62,3 +89,7 @@ export default function CategoryList() {
     </div>
   );
 }
+
+export default withSwal (({swal}, ref) => (
+  <CategoryList swal={swal} />
+))
