@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
 const mongoose = require("mongoose");
+const multer = require("multer")
 
 const app = express();
 const port = 4000;
@@ -14,10 +15,10 @@ const salt = 10;
 
 const mongodb_URL = "mongodb+srv://lazada:lazada@cluster0.t3zabpy.mongodb.net/?retryWrites=true&w=majority"
 
-app.use(cors())
+app.use(cors());
 app.use(express.static('public'))
-app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({extended:true}))
+app.use(express.json());
+// app.use(bodyParser.urlencoded({extended:false}))
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -26,7 +27,7 @@ app.use(
   })
 );
 
-app.use(cookieParser());
+app.use(cookieParser()); 
 
 //create a connection to mongodb
 mongoose.connect(mongodb_URL);
@@ -36,9 +37,38 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "",
   database: "lazada",
 });
+
+connection.connect((err) => {
+  if(err) throw err;
+  console.log("Mysql Connected!")
+})
+
+//Image starage config
+var imgConfig = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "./frontend/public/images")
+  },
+  filename: (req, file, callback) => {
+    callback(null, `image-${Date.now()}.${file.originalname}`)
+  }
+})
+
+//img Filter
+const isImage = (req, file, callback) => {
+  if(file.mimetype.startsWith("image")) {
+    callback(null, true)
+  } else {
+    callback(null, Error("Only image is allowed"))
+  }
+}
+
+var upload = multer({
+  storage: imgConfig,
+  fileFilter: isImage
+})
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
@@ -183,5 +213,75 @@ app.put("/editWarehouse/:id", (req, res) => {
     connection.query(q, [...values, warehouseId], (err, data) => {
       if (err) return res.json(err);
       return res.json("Warehouse updated successfully!");
+    });
+});
+
+
+// get product list
+app.get("/product", (req, res) => {
+  const q = "SELECT * FROM product";
+  connection.query(q, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+//create product
+app.post("/createProduct", upload.single("image"), (req, res) => {
+  // console.log(req.file.filename)
+  const q = "INSERT INTO product (`title`, `description`,`image`, `price`, `length`, `width`, `height`, `category`, `properties`) VALUES (?)";
+  const values = [
+    req.body.title,
+    req.body.description,
+    req.file.filename,
+    req.body.price,
+    req.body.length,
+    req.body.width,
+    req.body.height, 
+    req.body.category,
+    req.body.properties,
+  ]; 
+  connection.query(q, [values], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Product created successfully!");
+  });
+});
+
+//delete product
+app.delete("/deleteProduct/:id", (req, res) => {
+  const productId = req.params.id;
+  const q = "DELETE FROM product WHERE id = ?";
+  connection.query(q, productId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Product deleted successfully!");
+  });
+});
+
+// get single product info
+app.get("/getOneProduct/:id", (req, res) => {
+  const productId = req.params.id;
+  const q = "SELECT * FROM product WHERE id = ?";
+  connection.query(q, productId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+// update warehouse
+app.put("/editProduct/:id", (req, res) => {
+  const productId = req.params.id;
+  const q =
+    "UPDATE product SET `title` = ?, `description` = ?, `price` = ?, `length` = ?, `width` = ?, `height` = ? WHERE id = ?";
+    const values = [
+      req.body.title,
+      req.body.description,
+      req.body.price,
+      req.body.length,
+      req.body.width,
+      req.body.height,
+    ];
+    connection.query(q, [...values, productId], (err, data) => {
+      if (err) return res.json(err);
+      return res.json("Product updated successfully!");
     });
 });

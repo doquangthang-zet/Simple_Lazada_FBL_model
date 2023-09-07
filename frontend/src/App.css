@@ -124,6 +124,11 @@
   background-color: red;
 }
 
+.proImage {
+  height: 100px;
+  width: 100px;
+}
+
 /* Input form */
 .inputForm{
   position: relative;

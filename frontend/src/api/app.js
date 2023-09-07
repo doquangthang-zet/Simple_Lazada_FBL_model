@@ -2,6 +2,7 @@ import axios from "axios";
 
 const baseUrl = "http://localhost:4000/";
 
+// Categories part
 export const getAllCates = async () => {
     try {
         const res = await axios.get(`${baseUrl}api/category/getAll`);
@@ -42,6 +43,16 @@ export const deleteCateById = async (cateId) => {
     try {
         const res = axios.delete(`${baseUrl}api/category/delete/${cateId}`);
         return res
+    } catch (error) {
+        return null;
+    }
+}
+
+// Product part
+export const saveNewProduct = async (data) => {
+    try {
+        const res = axios.post(`${baseUrl}createProduct`, {...data});
+        return (await res).data;
     } catch (error) {
         return null;
     }
