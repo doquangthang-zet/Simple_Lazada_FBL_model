@@ -110,7 +110,6 @@ app.listen(port, () => {
   console.log(`Listen to the port ${port}`);
 });
 
-
 // warehouse routes
 
 // get warehouse list
@@ -128,17 +127,17 @@ app.post("/createWarehouse", (req, res) => {
   const values = [req.body.wName, req.body.address, req.body.volume];
   connection.query(q, values, (err, data) => {
     if (err) return res.json(err);
-    return res.json(data);
+    return res.json(data[0]);
   });
 });
 
 //delete warehouse
 app.delete("/deleteWarehouse/:id", (req, res) => {
   const warehouseId = req.params.id;
-  const q = "CALL deleteWarehouse(?)";
+  const q = "CALL deleteWarehouse(?);";
   connection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
-    return res.json(data);
+    return res.json(data[0]);
   });
 });
 
@@ -168,32 +167,38 @@ app.put("/editWarehouse/:id", (req, res) => {
 app.get("/viewWarehouseProduct/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q =
-    "SELECT id, wName, product_id, quantity FROM warehouse JOIN product_inventory ON  wId = warehouse_id WHERE wId = ?";
-    connection.query(q, warehouseId, (err, data) => {
-      if (err) return res.json(err);
-      return res.json(data);
-    });
+    "SELECT i.id, p.title, w.wName, i.product_id, i.quantity FROM warehouse w JOIN product_inventory i ON  w.wId = i.warehouse_id JOIN product p ON i.product_id = p.id WHERE wId = ? ";
+  connection.query(q, warehouseId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
 });
 
 // get info of product in warehouse
 app.get("/getWarehouseProduct/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q =
-    "SELECT id, product_id, warehouse_id, wName FROM warehouse JOIN product_inventory ON  wId = warehouse_id  WHERE id = ?";
-   connection.query(q, warehouseId, (err, data) => {
-     if (err) return res.json(err);
-     return res.json(data);
-   }); 
-})
-
-// move product to new warehouse
-app.put("/moveProduct:id", (req, res) => {
-  const values = [req.params.id, req.body.id, req.body.warehouse_id, req.body.product_id]
-  const q = "CALL moveProduct(?, ?)"
-  connection.query(q, values, (err, data) => {
+    "SELECT i.id, title, product_id, warehouse_id, wName, i.quantity FROM warehouse w JOIN product_inventory i ON  w.wId = i.warehouse_id  JOIN product p ON i.product_id = p.id WHERE i.id = ?";
+  connection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
-  }); 
-})
+  });
+});
+
+// move product to new warehouse
+app.put("/moveProduct/:old_id", (req, res) => {
+  const values = [
+    parseInt(req.params.old_id),
+    parseInt(req.body.warehouse_id),
+    req.body.id,
+    req.body.product_id,
+    parseInt(req.body.quantity),
+  ];
+  const q = "CALL moveProduct(?, ?, ?, ?, ?)";
+  connection.query(q, values, (err, data) => {
+    if (err) return res.json(err);
+    else return res.json(data[0]);
+  });
+});
 
 // get all product of a seller
