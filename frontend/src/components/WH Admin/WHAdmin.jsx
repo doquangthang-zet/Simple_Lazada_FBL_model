@@ -7,6 +7,8 @@ import WarehouseCreate from "./WarehouseCreate";
 import WarehouseEdit from "./WarehouseEdit";
 import CategoryCreate from "./CategoryCreate";
 import CategoryEdit from "./CategoryEdit";
+import WarehouseViewProduct from "./WarehouseViewProduct";
+import WarehouseMoveProduct from "./WarehouseMoveProduct";
 
 
 export default function WHAdmin() {
@@ -21,7 +23,15 @@ export default function WHAdmin() {
           <Route path="/newWarehouse" element={<WarehouseCreate />} />
           <Route path="/editWarehouse/:id" element={<WarehouseEdit />} />
           <Route path="/newCategory" element={<CategoryCreate />} />
-          <Route path="/editCategory/:id" element={<CategoryEdit />} />
+          <Route path="/editCategory" element={<CategoryEdit />} />
+          <Route
+            path="/viewWarehouseProduct/:id"
+            element={<WarehouseViewProduct />}
+          />
+          <Route
+            path="/moveWarehouseProduct/:id"
+            element={<WarehouseMoveProduct />}
+          />
         </Routes>
       </div>
     </div>

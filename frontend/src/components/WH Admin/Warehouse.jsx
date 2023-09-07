@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -18,10 +18,10 @@ export default function WarehouseList() {
     try {
       await axios.delete("http://localhost:4000/deleteWarehouse/" + id);
       window.location.reload();
-    } catch (err) {   
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   return (
     <div className="products">
@@ -54,14 +54,23 @@ export default function WarehouseList() {
                 <td> {item.address} </td>
                 <td> {item.volume} </td>
                 <td>
-                  <NavLink to={`/admin/editWarehouse/${item.wId}`}  
-                  >
+                  <NavLink to={`/admin/editWarehouse/${item.wId}`}>
                     <button type="button" class="actionBtn editBtn">
                       Edit
                     </button>
                   </NavLink>
 
-                  <button type="button" class="actionBtn deleteBtn" onClick={() => handleDelete(item.wId)}>
+                  <NavLink to={`/admin/viewWarehouseProduct/${item.wId}`}>
+                    <button type="button" class="actionBtn editBtn">
+                      Product
+                    </button>
+                  </NavLink>
+
+                  <button
+                    type="button"
+                    class="actionBtn deleteBtn"
+                    onClick={() => handleDelete(item.wId)}
+                  >
                     Delete
                   </button>
                 </td>

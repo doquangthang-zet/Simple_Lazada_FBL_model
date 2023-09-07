@@ -154,6 +154,7 @@ app.listen(port, () => {
   console.log(`Listen to the port ${port}`);
 });
 
+
 // warehouse routes
 
 // get warehouse list
@@ -167,26 +168,21 @@ app.get("/warehouse", (req, res) => {
 
 //create warehouse
 app.post("/createWarehouse", (req, res) => {
-  const q = "INSERT INTO warehouse VALUES (?)";
-  const values = [
-    req.body.wId,
-    req.body.wName,
-    req.body.address,
-    req.body.volume,
-  ];
-  connection.query(q, [values], (err, data) => {
+  const q = "CALL createWarehouse(?, ?, ?)";
+  const values = [req.body.wName, req.body.address, req.body.volume];
+  connection.query(q, values, (err, data) => {
     if (err) return res.json(err);
-    return res.json("Warehouse created successfully!");
+    return res.json(data);
   });
 });
 
 //delete warehouse
 app.delete("/deleteWarehouse/:id", (req, res) => {
   const warehouseId = req.params.id;
-  const q = "DELETE FROM warehouse WHERE wId = ?";
+  const q = "CALL deleteWarehouse(?)";
   connection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
-    return res.json("Warehouse deleted successfully!");
+    return res.json(data);
   });
 });
 
@@ -205,16 +201,46 @@ app.put("/editWarehouse/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q =
     "UPDATE warehouse SET `wName` = ?, `address` = ?, `volume` = ? WHERE wId = ?";
-    const values = [
-      req.body.wName,
-      req.body.address,
-      req.body.volume,
-    ];
-    connection.query(q, [...values, warehouseId], (err, data) => {
+  const values = [req.body.wName, req.body.address, req.body.volume];
+  connection.query(q, [...values, warehouseId], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Warehouse updated successfully!");
+  });
+});
+
+// view warehouse product list
+app.get("/viewWarehouseProduct/:id", (req, res) => {
+  const warehouseId = req.params.id;
+  const q =
+    "SELECT id, wName, product_id, quantity FROM warehouse JOIN product_inventory ON  wId = warehouse_id WHERE wId = ?";
+    connection.query(q, warehouseId, (err, data) => {
       if (err) return res.json(err);
-      return res.json("Warehouse updated successfully!");
+      return res.json(data);
     });
 });
+
+// get info of product in warehouse
+app.get("/getWarehouseProduct/:id", (req, res) => {
+  const warehouseId = req.params.id;
+  const q =
+    "SELECT id, product_id, warehouse_id, wName FROM warehouse JOIN product_inventory ON  wId = warehouse_id  WHERE id = ?";
+   connection.query(q, warehouseId, (err, data) => {
+     if (err) return res.json(err);
+     return res.json(data);
+   }); 
+})
+
+// move product to new warehouse
+app.put("/moveProduct:id", (req, res) => {
+  const values = [req.params.id, req.body.id, req.body.warehouse_id, req.body.product_id]
+  const q = "CALL moveProduct(?, ?)"
+  connection.query(q, values, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  }); 
+})
+
+// get all product of a seller
 
 
 // get product list
