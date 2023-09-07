@@ -20,7 +20,7 @@ export default function Seller() {
             window.location.reload(true);
         }).catch(err => console.log(err));
     }
-    axios.defaults.withCredentials = true;
+    // axios.defaults.withCredentials = true;
     useEffect(() => {
         axios.get("http://localhost:4000")
         .then(res => {
@@ -47,21 +47,21 @@ export default function Seller() {
                     <Route path='/products' element={<SellerProducts />} />
                     <Route path='/orders' element={<SellerInboundOrders />} />
                     <Route path='/newProduct' element={<SellerCreateProduct />} />
-                    <Route path='/editProduct' element={<SellerEditProduct />} />
+                    <Route path='/editProduct/:id' element={<SellerEditProduct />} />
                 </Routes>
             </div>
             <div className="fixed-bottom">
                 {
-                    auth ? 
-                    <div>
-                        <h3>You are authorized {name} Role: {role}</h3>
-                        <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
-                    </div>
-                    :
-                    <div>
-                        <h3>{msg}</h3>
-                        <Link to="/login" className="btn btn-primary">Login</Link>
-                    </div>
+                    // auth ? 
+                    // <div>
+                    //     <h3>You are authorized {name} Role: {role}</h3>
+                    //     <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
+                    // </div>
+                    // :
+                    // <div>
+                    //     <h3>{msg}</h3>
+                    //     <Link to="/login" className="btn btn-primary">Login</Link>
+                    // </div>
                 }
             </div>
         </div>
