@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getAllCates, getOneCate, updateCategory } from "../../api/app";
 
 export default function CategoryEdit() {
@@ -10,6 +10,8 @@ export default function CategoryEdit() {
   const [categories, setCategories] = useState([])
   const [parentCategory, setParentCategory] = useState('')
   const [properties, setProperties] = useState([])
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchCategories()
@@ -35,6 +37,7 @@ export default function CategoryEdit() {
     }
     updateCategory(cateId, data)
     fetchCategories()
+    navigate("/admin/category")
   }
 
   function addProperty() {

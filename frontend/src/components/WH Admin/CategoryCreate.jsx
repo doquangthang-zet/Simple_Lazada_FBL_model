@@ -1,11 +1,15 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { getAllCates, saveNewCate } from "../../api/app";
+import { useNavigate } from "react-router-dom";
+
 export default function CategoryCreate() {
   const [cateName, setCateName] = useState('')
   const [categories, setCategories] = useState([])
   const [parentCategory, setParentCategory] = useState('')
   const [properties, setProperties] = useState([])
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchCategories()
@@ -20,11 +24,12 @@ export default function CategoryCreate() {
   function saveCategory() {
     const data = {
       name: cateName,
-      parent_cate: parentCategory || undefined,
+      parent_cate: parentCategory || null,
       properties: properties,
     }
     saveNewCate(data)
     fetchCategories()
+    navigate("/admin/category");
   }
 
   function addProperty() {
