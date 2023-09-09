@@ -20,15 +20,18 @@ volume double,
 primary key (wId));
 
 create table product (
-id int auto_increment unique,
+id int unique auto_increment,
 title varchar(225),
 description varchar(225),
+image varchar(255),
 price double,
 length double,
 width double,
 height double,
 category varchar(45),
 properties json,
+sellerId INT,
+createdAt DATETIME,
 primary key (id));
 
 create table product_inventory (
