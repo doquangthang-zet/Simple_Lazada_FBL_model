@@ -18,7 +18,13 @@ export default function WarehouseCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:4000/createWarehouse", warehouse)
+      await axios
+        .post("http://localhost:4000/createWarehouse", warehouse)
+        .then((res) => {
+          if (res.data[0].message) {
+            window.alert(res.data[0].message);
+          }
+        });
       navigate("/admin/warehouse");
     } catch (err) {
     } 

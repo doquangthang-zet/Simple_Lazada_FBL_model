@@ -33,7 +33,9 @@ export default function  WarehouseEdit() {
       e.preventDefault();
       const sentId  = warehouse.wId
       try {
-        await axios.put(`http://localhost:4000/editWarehouse/${sentId}`, warehouse);
+        await axios.put(`http://localhost:4000/editWarehouse/${sentId}`, warehouse)
+        .then( (res) => 
+        window.alert(res.data) );
         navigate("/admin/warehouse");
       } catch (err) {}
     };
