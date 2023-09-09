@@ -8,12 +8,14 @@ import Checkout from './components/Checkout';
 import SellerRegister from './components/AuthPage/SellerRegister';
 import AdminRegister from './components/AuthPage/AdminRegister';
 import WHAdmin from './components/WH Admin/WHAdmin';
+import axios from 'axios';
 
 function App() {
+  axios.defaults.withCredentials = true;
   return (
     <div>
       <Routes>
-        <Route path='/' element={<Seller />} />
+        <Route path='/' element={<Cart />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/login' element={<Login />} />

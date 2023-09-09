@@ -1,24 +1,17 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getAllCates, getOneCate } from "../../api/app";
+import { deleteProductById, getAllCates, getOneCate } from "../../api/app";
+import { withSwal } from 'react-sweetalert2';
 
-export default function SellerProducts () {
+function SellerProducts ({swal}) {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
     const [products, setProducts] = useState([])
 
     const [categories, setCategories] = useState([])
-    const [category, setCategory] = useState('')
-    const [cateName, setCateName] = useState('')
-    const [parentCategory, setParentCategory] = useState('')
-    const [properties, setProperties] = useState([])
 
     useEffect(() => {
-        fetch(`http://localhost:4000/product`)
-          .then((res) => res.json())
-          .then((data) => {
-            setProducts(data);
-          });
+        fetchProduct()
         fetchCategories()
       }, []);
 
@@ -26,22 +19,32 @@ export default function SellerProducts () {
         getAllCates().then(res => {
           setCategories(res.cate)
         })
-      }
+    }
 
-    const handleDelete = async (id) => {
-        try {
-          await axios.delete("http://localhost:4000/deleteProduct/" + id);
-          window.location.reload();
-        } catch (err) {   
-          console.log(err)
-        }
+    function fetchProduct() {
+        fetch(`http://localhost:4000/product`)
+          .then((res) => res.json())
+          .then((data) => {
+            setProducts(data);
+          });
+    }
+    const handleDelete = (pro) => {
+        swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to delete ${pro.title}`,
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            confirmButtonText: "Yes, Delete!",
+            reverseButtons: true,
+            confirmButtonColor: '#d55',
+          }).then(result => {
+            if (result.isConfirmed) {
+                deleteProductById(pro.id)
+                window.location.reload();
+            }
+              console.log({result})
+          });
       }
-
-    // const getOneCategory = (id) => {
-    //     getOneCate(id).then(res => {
-    //         return (res.cate.name)
-    //     })
-    // }
 
     return (
         <div className="products">
@@ -68,6 +71,9 @@ export default function SellerProducts () {
                             <th scope="col">Width</th>
                             <th scope="col">Height</th>
                             <th scope="col">Category</th>
+                            <th scope="col">Properties</th>
+                            <th scope="col">Seller ID</th>
+                            <th scope="col">Create At</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -83,12 +89,15 @@ export default function SellerProducts () {
                                 <td>{pro.width}</td>
                                 <td>{pro.height}</td>
                                 <td>{categories && categories.filter(cate => cate._id == pro.category).map(cate => (cate.name))}</td>
+                                <td>{pro.properties}</td>
+                                <td>{pro.sellerId}</td>
+                                <td>{pro.createdAt}</td>
                                 <td>
                                     <NavLink to={`/seller/editProduct/${pro.id}`}>
                                         <button type="button" class="actionBtn editBtn">Edit</button>
                                     </NavLink>
                                     
-                                    <button type="button" class="actionBtn deleteBtn" onClick={() => handleDelete(pro.id)}>Delete</button>
+                                    <button type="button" class="actionBtn deleteBtn" onClick={() => handleDelete(pro)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
@@ -102,3 +111,7 @@ export default function SellerProducts () {
         </div>  
     )
 }
+
+export default withSwal (({swal}, ref) => (
+    <SellerProducts swal={swal} />
+  ))
