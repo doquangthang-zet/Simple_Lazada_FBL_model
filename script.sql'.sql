@@ -48,27 +48,22 @@ insert into warehouse(wName, address, volume) values
 ("WC", "28 naufd stress, basdf ward, ha tinh province", 100000),
 ("WB", "28 naufd stress, basdf ward, ha tinh province", 150000);
 
-insert into product(title, description, price, length, width, height) values 
-("Table", "A sturdy table", 1000, 3, 1.5, 1),
-("Smartphone", "A smartphone by samsung", 1000, 0.2, 0.1, 0.01),
-("Tablet", "A tablet by samsung", 1500, 0.25, 0.2, 0.02);
+insert into product values 
+(1, "Samsung", "Galaxy Y", "logo192.png", 1000, 1, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
+(2, "Iphone", "14Pro", "logo192.png", 1500, 0.2, 0.2, 0.2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35");
 
 insert into product_inventory(product_id, warehouse_id, quantity, total_volume) values 
 (1, 2, 200, 900),
 (2, 2, 100, 0.02),
 (1, 1, 100, 450);
 
-SELECT i.id, p.title, w.wName, i.product_id, i.quantity FROM warehouse w JOIN product_inventory i ON  w.wId = i.warehouse_id JOIN product p ON i.product_id = p.id WHERE wId = 3;
-select * from warehouse;
 
-select * from warehouse;
-select * from product;
-
+drop view if exists product_volume;
 create view product_volume as
 	select id, length * height * width as volume from product;
-drop view product_volume;
 
-drop procedure deleteWarehouse;
+
+drop procedure if exists deleteWarehouse;
 delimiter &&
 create procedure deleteWarehouse(in id int)
 begin
@@ -99,10 +94,9 @@ begin
 end &&
 delimiter ;
 
-call deleteWarehouse(2);
-select @mess;
 
-drop procedure createWarehouse;
+
+drop procedure if exists createWarehouse;
 delimiter &&
 create procedure createWarehouse(wname varchar(50), waddress varchar(225), wvolume int)
 begin 
@@ -126,8 +120,8 @@ begin
 end &&
 delimiter ;
 
-drop procedure moveProduct;
 
+drop procedure if exists moveProduct;
 delimiter &&
 create procedure moveProduct(old_wid int, new_wid int, inventory int, product int, moveQuantity int)
 begin
@@ -177,22 +171,17 @@ begin
 end &&
 delimiter ;
 
-select * from product_inventory order by warehouse_id;
-call moveProduct(2, 1, 1, 1, 10);
-select * from product_inventory order by warehouse_id;
-delete from product_inventory where id = 5;
 
 
+drop view if exists available_space;
 create view available_space as
 	select wid, volume - sum(total_volume) as available
     from warehouse join product_inventory on wid = warehouse_id
     group by wid
     order by available desc;
     
-drop view available_space;    
-select * from available_space;
-select * from available_space limit 0, 1;
 
+drop procedure if exists insert_inbound;
 delimiter &&
 create procedure insert_inbound(pid int, wid int, pquantity int)
 begin
@@ -215,9 +204,8 @@ begin
 end && 
 delimiter ;
 
-drop procedure insert_inbound;
 
-drop procedure inboundOrder;
+drop procedure if exists inboundOrder;
 delimiter &&
 create procedure inboundOrder(pid int, pquantity int)
 begin
@@ -257,9 +245,3 @@ begin
 end &&		
 delimiter ;  
 
-
-select * from product_inventory;
-call inboundOrder(1, 100000);
-select * from available_space;
-
-delete from product_inventory where id = 25;
