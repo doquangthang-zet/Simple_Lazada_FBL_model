@@ -252,6 +252,18 @@ app.put("/moveProduct/:old_id", (req, res) => {
 // get all product of a seller
 
 
+
+// create inbound order
+app.post("/createInbound", (req, res) => {
+  const q = "CALL inboundOrder(?, ?)"
+  const values = []
+  connection.query(q, values, (err, data) => {
+    if (err) return res.json(err);
+    else return res.json(data[0]);
+  })
+})
+
+
 // get product list
 app.get("/product", (req, res) => {
   const q = "SELECT * FROM product";
