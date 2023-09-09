@@ -1,7 +1,16 @@
 create database lazada;
 use lazada;
 
-drop table product_inventory;
+drop table if exists warehouse, product_inventory, product, user;
+
+CREATE TABLE `lazada`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `role` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`));
+
 drop table if exists warehouse, product_inventory, product;
 create table warehouse (
 wId int auto_increment unique,
@@ -18,6 +27,8 @@ price double,
 length double,
 width double,
 height double,
+category varchar(45),
+properties json,
 primary key (id));
 
 create table product_inventory (

@@ -37,7 +37,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "root",
   database: "lazada",
 });
 
