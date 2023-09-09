@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
 const mongoose = require("mongoose");
 const multer = require("multer")
+const fs = require("fs");
 
 const app = express();
 const port = 4000;
@@ -15,9 +16,9 @@ const salt = 10;
 
 const mongodb_URL = "mongodb+srv://lazada:lazada@cluster0.t3zabpy.mongodb.net/?retryWrites=true&w=majority"
 
-app.use(cors());
 app.use(express.static('public'))
 app.use(express.json());
+// app.use(cors());
 // app.use(bodyParser.urlencoded({extended:false}))
 app.use(
   cors({
@@ -70,6 +71,10 @@ var upload = multer({
   fileFilter: isImage
 })
 
+app.listen(port, () => {
+  console.log(`Listen to the port ${port}`);
+});
+
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
@@ -79,6 +84,7 @@ const verifyUser = (req, res, next) => {
       if (err) {
         return res.json({ Error: "Token is not ok" });
       } else {
+        req.id = decoded.id
         req.name = decoded.name;
         req.role = decoded.role;
         next();
@@ -89,7 +95,7 @@ const verifyUser = (req, res, next) => {
 
 //Routing
 app.get("/", verifyUser, (req, res) => {
-  return res.json({ Status: "Success", name: req.name, role: req.role });
+  return res.json({ Status: "Success", id: req.id, name: req.name, role: req.role });
 });
 
 app.post("/register", (req, res) => {
@@ -121,11 +127,13 @@ app.post("/login", (req, res) => {
         (err, response) => {
           if (err) return res.json({ Error: "Password compare error" });
           if (response) {
+            const id = data[0].id;
             const name = data[0].name;
             const role = data[0].role;
-            const token = jwt.sign({ name, role }, "jwt-secret-key", {
+            const token = jwt.sign({ id, name, role }, "jwt-secret-key", {
               expiresIn: "1d",
             });
+
             res.cookie("token", token);
 
             return res.json({ Status: "Success" });
@@ -145,14 +153,10 @@ app.get("/logout", (req, res) => {
     return res.json({Status: "Success"})
 })
 
-//Album route
+//Cate route
 const cateRoute = require("./routes/categories"); 
 app.use("/api/category/", cateRoute);
 
-
-app.listen(port, () => {
-  console.log(`Listen to the port ${port}`);
-});
 
 // warehouse routes
 
@@ -260,18 +264,20 @@ app.get("/product", (req, res) => {
 //create product
 app.post("/createProduct", upload.single("image"), (req, res) => {
   // console.log(req.file.filename)
-  const q = "INSERT INTO product (`title`, `description`,`image`, `price`, `length`, `width`, `height`, `category`, `properties`) VALUES (?)";
+  const q = "INSERT INTO product (`title`, `description`, `image`, `price`, `length`, `width`, `height`, `category`, `properties`, `sellerId`, `createdAt`) VALUES (?)";
   const values = [
     req.body.title,
     req.body.description,
     req.file.filename,
     req.body.price,
-    req.body.length,
+    req.body.length, 
     req.body.width,
     req.body.height, 
     req.body.category,
-    req.body.properties,
-  ]; 
+    JSON.stringify(req.body.properties),
+    req.body.sellerId,
+    new Date(),
+  ];
   connection.query(q, [values], (err, data) => {
     if (err) return res.json(err);
     return res.json("Product created successfully!");
@@ -281,9 +287,25 @@ app.post("/createProduct", upload.single("image"), (req, res) => {
 //delete product
 app.delete("/deleteProduct/:id", (req, res) => {
   const productId = req.params.id;
+
+  //Get the image name of deleted item
+  const getImageQ = "SELECT * FROM product WHERE id = ?";
+  var image = ''
+  connection.query(getImageQ, productId, (err, data) => {
+    if (err) return res.json(err);
+    image = data[0].image
+  });
+
+  //Delete the items
   const q = "DELETE FROM product WHERE id = ?";
   connection.query(q, productId, (err, data) => {
     if (err) return res.json(err);
+    //Delete the image of item
+    fs.unlink(`./frontend/public/images/${image}`, function (err) {
+      if (err) throw err;
+      // if no error, file has been deleted successfully
+      console.log('File deleted!');
+    });
     return res.json("Product deleted successfully!");
   });
 });
@@ -299,17 +321,20 @@ app.get("/getOneProduct/:id", (req, res) => {
 });
 
 // update warehouse
-app.put("/editProduct/:id", (req, res) => {
+app.put("/editProduct/:id", upload.single("image"), (req, res) => {
   const productId = req.params.id;
   const q =
-    "UPDATE product SET `title` = ?, `description` = ?, `price` = ?, `length` = ?, `width` = ?, `height` = ? WHERE id = ?";
+    "UPDATE product SET `title` = ?, `description` = ?, `image` = ?, `price` = ?, `length` = ?, `width` = ?, `height` = ?, `category` = ?, `properties` = ? WHERE id = ?";
     const values = [
       req.body.title,
       req.body.description,
+      req.file.filename,
       req.body.price,
       req.body.length,
       req.body.width,
-      req.body.height,
+      req.body.height, 
+      req.body.category,
+      JSON.stringify(req.body.properties),
     ];
     connection.query(q, [...values, productId], (err, data) => {
       if (err) return res.json(err);

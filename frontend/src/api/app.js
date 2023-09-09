@@ -57,3 +57,32 @@ export const saveNewProduct = async (data) => {
         return null;
     }
 }
+
+export const deleteProductById = async (proId) => {
+    try {
+        const res = await axios.delete("http://localhost:4000/deleteProduct/" + proId);
+        return res
+    } catch (error) {
+        return null;
+    }
+}
+
+export const getOneProduct = async (proId) => {
+    try {
+        const res = await axios.get(`${baseUrl}getOneProduct/${proId}`);
+        return res.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const updateProduct = async (proId, data) => {
+    try {
+        const res = axios.put(`${baseUrl}editProduct/${proId}`, {...data}, {headers: {
+            "Content-Type": "multipart/form-data"
+        }});
+        return (await res).data;
+    } catch (error) {
+        return null;
+    }
+}
