@@ -1,19 +1,39 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { deleteProductById, getAllCates, getOneCate } from "../../api/app";
+import { deleteProductById, getAllCates, getAllProducts, getOneCate } from "../../api/app";
 import { withSwal } from 'react-sweetalert2';
 
-function SellerProducts ({swal}) {
+function SellerProducts ({swal}, sellerId) {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
+    const params = useParams();
     const [products, setProducts] = useState([])
 
     const [categories, setCategories] = useState([])
 
+    const [msg, setMsg] = useState('')
+    const [id, setId] = useState(params.sellerId)
+
     useEffect(() => {
-        fetchProduct()
+        // console.log(params.id)
+        getUser()
+        getAllProducts(id).then(res => {
+            setProducts(res.data)
+        })
         fetchCategories()
-      }, []);
+    }, []);
+
+    function getUser() {
+        axios.get("http://localhost:4000")
+        .then(res => {
+            if(res.data.Status === "Success") {
+                setId(res.data.id)
+            } else {
+                setMsg(res.data.Error)
+            }
+        })
+        .then(err => console.log(err))
+    }
 
     function fetchCategories() {
         getAllCates().then(res => {
@@ -21,13 +41,6 @@ function SellerProducts ({swal}) {
         })
     }
 
-    function fetchProduct() {
-        fetch(`http://localhost:4000/product`)
-          .then((res) => res.json())
-          .then((data) => {
-            setProducts(data);
-          });
-    }
     const handleDelete = (pro) => {
         swal.fire({
             title: 'Are you sure?',
@@ -93,7 +106,7 @@ function SellerProducts ({swal}) {
                                 <td>{pro.sellerId}</td>
                                 <td>{pro.createdAt}</td>
                                 <td>
-                                    <NavLink to={`/seller/editProduct/${pro.id}`}>
+                                    <NavLink to={`/seller/${id}/editProduct/${pro.id}`}>
                                         <button type="button" class="actionBtn editBtn">Edit</button>
                                     </NavLink>
                                     
@@ -105,7 +118,7 @@ function SellerProducts ({swal}) {
                 </table>
             </div>
 
-            <NavLink to='/seller/newProduct'>
+            <NavLink to={`/seller/${id}/newProduct`}>
                 <button type="button" class="actionBtn">Create</button>
             </NavLink>
         </div>  

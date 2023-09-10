@@ -49,6 +49,16 @@ export const deleteCateById = async (cateId) => {
 }
 
 // Product part
+
+export const getAllProducts = async (sellerId) => {
+    try {
+        const res =  axios.get(`${baseUrl}product/${sellerId}`);
+        return await res;
+    } catch (error) {
+        return null;
+    }
+}
+
 export const saveNewProduct = async (data) => {
     try {
         const res = axios.post(`${baseUrl}createProduct`, {...data});
