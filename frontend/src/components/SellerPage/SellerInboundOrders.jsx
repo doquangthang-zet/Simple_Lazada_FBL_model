@@ -1,4 +1,10 @@
+import { useState } from "react"
+import { useParams } from "react-router-dom"
+
 export default function SellerInboundOrders() {
+    const params = useParams()
+    const [id, setId] = useState(params.sellerId)
+
     return (
         <div className="products">
             <div class="container">

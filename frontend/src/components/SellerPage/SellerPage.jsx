@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import SideBar from "../Layout/SideBar";
+import { useParams } from "react-router-dom";
 
 export default function SellerPage() {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
     const [products, setProducts] = useState([])
+    const params = useParams();
 
     useEffect(() => {
-        fetch(`http://localhost:4000/product`)
+        console.log(params)
+        fetch(`http://localhost:4000/product/${params.sellerId}`)
           .then((res) => res.json())
           .then((data) => {
             setProducts(data);

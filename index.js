@@ -265,9 +265,10 @@ app.post("/createInbound", (req, res) => {
 
 
 // get product list
-app.get("/product", (req, res) => {
-  const q = "SELECT * FROM product";
-  connection.query(q, (err, data) => {
+app.get("/product/:sellerId", (req, res) => {
+  const sellerId = req.params.sellerId
+  const q = "SELECT * FROM product where sellerId = ?";
+  connection.query(q, sellerId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -335,6 +336,15 @@ app.get("/getOneProduct/:id", (req, res) => {
 // update warehouse
 app.put("/editProduct/:id", upload.single("image"), (req, res) => {
   const productId = req.params.id;
+
+  //Get the image name of deleted item
+  const getImageQ = "SELECT * FROM product WHERE id = ?";
+  var image = ''
+  connection.query(getImageQ, productId, (err, data) => {
+    if (err) return res.json(err);
+    image = data[0].image
+  });
+
   const q =
     "UPDATE product SET `title` = ?, `description` = ?, `image` = ?, `price` = ?, `length` = ?, `width` = ?, `height` = ?, `category` = ?, `properties` = ? WHERE id = ?";
     const values = [
@@ -350,6 +360,11 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
     ];
     connection.query(q, [...values, productId], (err, data) => {
       if (err) return res.json(err);
+      fs.unlink(`./frontend/public/images/${image}`, function (err) {
+        if (err) throw err;
+        // if no error, file has been deleted successfully
+        console.log('File deleted!');
+      });
       return res.json("Product updated successfully!");
     });
 });

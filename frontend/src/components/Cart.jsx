@@ -100,7 +100,7 @@ function Cart() {
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
                 {
                     role === "seller" && (
-                    <NavLink to='/seller/home'>
+                    <NavLink to={`/seller/${id}/home`}>
                         <button type="button" class="actionBtn">Seller</button>
                     </NavLink>
                     )
