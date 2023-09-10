@@ -250,15 +250,22 @@ app.put("/moveProduct/:old_id", (req, res) => {
 });
 
 // get all product of a seller
-app.get("/getSellerProduct", (req, res) => {
-  const q = ""
-})
+app.get("/getSellerProduct/:sellerId", (req, res) => {
+  const id = req.params.sellerId;
+  const q = "CALL getSellerProduct(?)";
+  connection.query(q, id, (err, data) => {
+    if (err) 
+    return res.json(err);
+    return res.json(data[0]);
+    
+  });
+});
 
 
 // create inbound order
 app.post("/createInbound", (req, res) => {
   const q = "CALL inboundOrder(?, ?)"
-  const values = []
+  const values = [parseInt(req.body.productId), req.body.quantity]
   connection.query(q, values, (err, data) => {
     if (err) return res.json(err);
     else return res.json(data[0]);

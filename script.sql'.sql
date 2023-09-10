@@ -247,8 +247,8 @@ delimiter ;
 
 drop procedure if exists getSellerProduct;
 delimiter &&
-create procedure getSellerProduct(pid int)
+create procedure getSellerProduct(sid int)
 begin
-    select id, title from product where id = pid;
+    select id, title from product where sellerId = sid;
 end &&
 delimiter ;  
