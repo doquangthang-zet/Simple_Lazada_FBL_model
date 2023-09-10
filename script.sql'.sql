@@ -245,3 +245,10 @@ begin
 end &&		
 delimiter ;  
 
+drop procedure if exists getSellerProduct;
+delimiter &&
+create procedure getSellerProduct(pid int)
+begin
+    select id, title from product where id = pid;
+end &&
+delimiter ;  

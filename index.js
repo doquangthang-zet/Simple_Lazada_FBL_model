@@ -250,7 +250,9 @@ app.put("/moveProduct/:old_id", (req, res) => {
 });
 
 // get all product of a seller
-
+app.get("/getSellerProduct", (req, res) => {
+  const q = ""
+})
 
 
 // create inbound order
