@@ -4,7 +4,7 @@ export default function Header () {
         <div class="headerLazada">
             <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
                 <div class="container">
-                    <a class="navbar-brand col-3" href="#"><img src={imageBasePath + "lazada-logo.jpg"} class="logo" alt="logo" /></a>
+                    <a class="navbar-brand col-3" href="/"><img src={imageBasePath + "lazada-logo.jpg"} class="logo" alt="logo" /></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>

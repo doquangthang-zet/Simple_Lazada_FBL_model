@@ -131,9 +131,30 @@
   margin-bottom: 20px;
 }
 
+.proImage {
+  height: 100px;
+  width: 100px;
+}
+
 /* Input form */
 .inputForm{
   position: relative;
+}
+
+/* Cart page */
+.cart, .checkout {
+  /* position: absolute; */
+  margin-top: 130px;
+  padding: 20px;
+  padding-top: 20px;
+}
+
+.total{
+  width: fit-content;
+  border-top: 5px solid #008EC0;
+  border-bottom: 5px solid #008EC0;
+  margin-bottom: 20px;
+  padding: 5px;
 }
 
 @media screen and (max-width: 780px) {
