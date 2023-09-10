@@ -16,7 +16,13 @@ export default function WarehouseList() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete("http://localhost:4000/deleteWarehouse/" + id);
+      await axios
+        .delete("http://localhost:4000/deleteWarehouse/" + id)
+        .then((res) => {
+          if (res.data[0].message) {
+            window.alert(res.data[0].message);
+          }
+        });
       window.location.reload();
     } catch (err) {
       console.log(err);
