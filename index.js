@@ -1,7 +1,7 @@
 
 const express = require('express')
 const bodyParser = require("body-parser")
-const mysql = require("mysql")
+const mysql = require("mysql2")
 const cors = require("cors")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
@@ -38,7 +38,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "quinh.quinh2002",
+  password: "12345678",
   database: "lazada",
 });
 

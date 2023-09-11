@@ -2,17 +2,16 @@ import {Route, Routes} from "react-router-dom";
 import HeaderCustomer from "../Layout/HeaderCustomer";
 // import SideBar from "../Layout/SideBar";
 import CustomerPage from "./CustomerPage";
-import Cart from "./Cart";
+import CartPage from "./CartPage";
 
 export default function Customer() {
     return (
         <div>
-            <HeaderCustomer />
-            {/* <SideBar /> */}
+            {/* <HeaderCustomer /> */}
             <div>
                 <Routes>
                     <Route path="/" element={<CustomerPage />} />
-                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/cart" element={<CartPage />} />
                 </Routes>
             </div>
         </div>
