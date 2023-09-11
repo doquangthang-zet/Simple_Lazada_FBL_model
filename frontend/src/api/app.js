@@ -86,3 +86,12 @@ export const updateProduct = async (proId, data) => {
         return null;
     }
 }
+
+export const deleteOrderByID = async (itemId) => {
+    try {
+        const res = await axios.delete("http://localhost:4000/deleteOrder/" + itemId);
+        return res
+    } catch (error) {
+        return null;
+    }
+}

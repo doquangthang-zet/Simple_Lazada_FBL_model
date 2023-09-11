@@ -4,25 +4,36 @@ import { useState } from 'react';
 
 const CustomerPage = () => {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
-    const [allCate, setAllCate] = useState([]);
-    const [selectedCate, setSelectedCate] = useState();
-    var defaultCate = [
-        {name: 'Groceries', category: 'Groceries'},
-        {name: 'Fashion', category: 'Fashion'},
-        {name: 'Beauty', category: 'Beauty'},
-        {name: 'Electronics', category: 'Electronics'},
-        {name: 'Kitchen', category: 'Kitchen'},
-        {name: 'Furnitures', category: 'Furnitures'},
-        {name: 'Sports', category: 'Sports'},
-        {name: 'Fruits', category:'Fruits'}
-    ]
-
+    const [order, setOrders] = useState({
+        productId: 0,
+        title: '',
+        price: 0,
+        quantity: 1,
+        category: '',
+        sellerId: 0
+    })
+    const [products, setProducts] = useState([])
     useEffect(() => {
-        setAllCate(defaultCate)
-    },[])
-
-    function handleCateChange(e) {
-        setSelectedCate(e.target.value)
+        fetch(`http://localhost:4000/product`)
+          .then((res) => res.json())
+          .then((data) => {
+            setProducts(data);
+          });
+      }, []);
+    
+    const config = {
+        headers: {
+            "Content-Type": 'multipart/form-data'
+        }
+    }
+    const addToCart = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post("http://localhost:4000/addToCart", product, config)
+            
+        } catch (err) {
+            console.log(err)
+        }
     }
     return (
         <div className='products'>
@@ -78,46 +89,28 @@ const CustomerPage = () => {
 
             <div class="container">
                 <div class="row g-2">
-                    <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                        <a class="card-block stretched-link text-decoration-none " href>
-                            <img class="card-img-top" src={imageBasePath + "lazada-logo.jpg"} alt="Card image cap" />
-                            <div class="card-body">
-                                <h5 class="card-title">Oregon</h5>
-                                <p class="card-text">$100</p>
-                                {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                        <a class="card-block stretched-link text-decoration-none " href>
-                            <img class="card-img-top" src={imageBasePath + "lazada-logo.jpg"} alt="Card image cap" />
-                            <div class="card-body">
-                                <h5 class="card-title">Pizza Crust</h5>
-                                <p class="card-text">$100</p>
-                                {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                        <a class="card-block stretched-link text-decoration-none " href>
-                            <img class="card-img-top" src={imageBasePath + "lazada-logo.jpg"} alt="Card image cap" />
-                            <div class="card-body">
-                                <h5 class="card-title">Pork Crib</h5>
-                                <p class="card-text">$100</p>
-                                {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                        <a class="card-block stretched-link text-decoration-none " href>
-                            <img class="card-img-top" src={imageBasePath + "lazada-logo.jpg"} alt="Card image cap" />
-                            <div class="card-body">
-                                <h5 class="card-title">Beef</h5>
-                                <p class="card-text">$100</p>
-                                {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
-                            </div>
-                        </a>
-                    </div>
+                    {products && products.map(item => (
+                         <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
+                         <a class="card-block stretched-link text-decoration-none " href>
+                             <img class="card-img-top" src={imageBasePath + item.image} alt="Card image cap" />
+                             <div class="card-body">
+                                 <h5 class="card-title">{item.title}</h5>
+                                 <p class="card-text">{item.price}</p>
+                                 {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
+                             </div>
+                             <form action="add-to-cart" method="post">
+                                <input type="hidden" name="id" value={item.id} />
+                                <input type="hidden" name="name" value={item.title} />
+                                <input type="hidden" name="price" value={item.price} />
+                                <input type="hidden" name="categrory" value={item.category} />
+                                <input type="hidden" name="sellerid" value={item.sellerId} />
+                                <input type="hidden" name="quantity" value="1" />
+
+                                <input type="submit" value='Add to cart' class="btn btn-primary"></input>
+                             </form>
+                         </a>
+                     </div>
+                    ))}
                 </div>
             </div>
         </div>

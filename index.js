@@ -38,7 +38,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "quinh.quinh2002",
   database: "lazada",
 });
 
@@ -273,6 +273,14 @@ app.get("/product", (req, res) => {
   });
 });
 
+app.get("/cart", (req, res) => {
+  const q="SELECT * FROM cart";
+  connection.query(q,(err,data) => {
+    if (err) return res.json(err);
+    return res.json(data)
+  })
+})
+
 //create product
 app.post("/createProduct", upload.single("image"), (req, res) => {
   // console.log(req.file.filename)
@@ -307,7 +315,6 @@ app.delete("/deleteProduct/:id", (req, res) => {
     if (err) return res.json(err);
     image = data[0].image
   });
-
   //Delete the items
   const q = "DELETE FROM product WHERE id = ?";
   connection.query(q, productId, (err, data) => {
@@ -321,6 +328,16 @@ app.delete("/deleteProduct/:id", (req, res) => {
     return res.json("Product deleted successfully!");
   });
 });
+
+//delete order from cart
+app.delete("/deleteOrder/:id", (req, res) => {
+  const productId = req.params.id;
+  const q = "DELETE FROM cart WHERE id = ?";
+  connection.query(q, productId, (err) => {
+    if (err) return res.json(err);
+    return res.json("Cart deleted!");
+  })
+})
 
 // get single product info
 app.get("/getOneProduct/:id", (req, res) => {
@@ -352,4 +369,22 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
       if (err) return res.json(err);
       return res.json("Product updated successfully!");
     });
+});
+
+//add to cart
+app.post('/add_to_cart', function(req, res){
+  const q = "INSERT INTO customer_order('productId','title', 'price', 'quantity', 'category', 'sellerId') VALUES (?)";
+  const id = rep.body.id;
+  const values = [
+    req.body.productId,
+    req.body.title,
+    req.body.price,
+    req.body.quantity,
+    req.body.category,
+    req.body.sellerId,
+  ];
+  connection.query(q, [values], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Added to cart!");
+  });
 });
