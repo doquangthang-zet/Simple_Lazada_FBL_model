@@ -5,8 +5,6 @@ import Customer from './components/CustomerPage/Customer';
 
 import Register from './components/AuthPage/Register';
 import Login from './components/AuthPage/Login';
-import Cart from './components/Cart';
-import Checkout from './components/Checkout';
 import SellerRegister from './components/AuthPage/SellerRegister';
 import AdminRegister from './components/AuthPage/AdminRegister';
 import WHAdmin from './components/WH Admin/WHAdmin';
@@ -17,9 +15,7 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path='/' element={<Cart />} />
-        <Route path='/cart' element={<Cart />} />
-        <Route path='/checkout' element={<Checkout />} />
+        <Route path='/' element={<Seller />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/sellerRegister' element={<SellerRegister />} />

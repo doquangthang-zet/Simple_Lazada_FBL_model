@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from './Layout/Header'
+import Header from '../Layout/Header'
 
 function Checkout() {
   return (
@@ -14,6 +14,35 @@ function Checkout() {
                 <div class="row">
                     
                     <div class="col-md-12">
+                        <div>
+                            <h4 class="mb-3 text-center">Your Order</h4>
+                            <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>
+                                <div className='d-flex align-items-center p-2'>
+                                    {/* <BsPlusSquare /> */}
+                                    3
+                                    {/* <PiMinusSquare /> */}
+                                </div>
+                            </td>
+                            <td>3000</td>
+                        </tr>
+                    </tbody>
+                </table>
+                        </div>
                         <h4 class="mb-3 text-center">Billing address</h4>
                         <form class="needs-validation" novalidate>
                             <div class="row">
