@@ -44,6 +44,17 @@ primary key (id),
 foreign key (warehouse_id) references warehouse(wId),
 foreign key (product_id) references product(id) );
 
+drop table if exists cart, customer_order;
+create table cart (
+id int unique auto_increment,
+productId int,
+title varchar(225),
+price double,
+quantity int,
+category varchar(45),
+sellerId int,
+primary key (id));
+
 insert into warehouse(wName, address, volume) values 
 ("WC", "28 naufd stress, basdf ward, ha tinh province", 100000),
 ("WB", "28 naufd stress, basdf ward, ha tinh province", 150000);
@@ -57,6 +68,8 @@ insert into product_inventory(product_id, warehouse_id, quantity, total_volume) 
 (2, 2, 100, 0.02),
 (1, 1, 100, 450);
 
+insert into cart values
+(1, 1, "Samsung", "1000",1, "64f95624880a0a5b708de026",4);
 
 drop view if exists product_volume;
 create view product_volume as

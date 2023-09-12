@@ -36,7 +36,9 @@ properties json,
 sellerId INT,
 createdAt DATETIME,
 primary key (id));
+
 select * from product;
+
 drop table if exists cart, customer_order;
 create table cart (
 id int unique auto_increment,
