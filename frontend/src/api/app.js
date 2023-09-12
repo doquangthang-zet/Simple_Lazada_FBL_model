@@ -95,3 +95,12 @@ export const deleteOrderByID = async (itemId) => {
         return null;
     }
 }
+
+export const getProductByCate = async (cateId) => {
+    try {
+        const res = await axios.get(`${baseUrl}getProductByCate/${cateId}`)
+        return res.data;
+    } catch (error) {
+        return null;
+    }
+}

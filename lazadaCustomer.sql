@@ -202,4 +202,5 @@ from product
 where id = 2;
 
 show tables;
-select * from product;
+select * from product where category = '64f95624880a0a5b708de026';
+select * from cart;

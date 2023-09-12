@@ -273,6 +273,15 @@ app.get("/product", (req, res) => {
   });
 });
 
+app.get("/getProductByCate/:id", (req, res) => {
+  const cateId = req.params.id;
+  const q = "SELECT * FROM product WHERE category = ?";
+  connection.query(q, cateId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+})
+
 app.get("/cart", (req, res) => {
   const q="SELECT * FROM cart";
   connection.query(q,(err,data) => {
@@ -372,9 +381,8 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
 });
 
 //add to cart
-app.post('/add_to_cart', function(req, res){
-  const q = "INSERT INTO customer_order('productId','title', 'price', 'quantity', 'category', 'sellerId') VALUES (?)";
-  const id = rep.body.id;
+app.post('/addToCart', function(req, res){
+  const q = "INSERT INTO cart('productId','title', 'price', 'quantity', 'category', 'sellerId') VALUES (?)";
   const values = [
     req.body.productId,
     req.body.title,

@@ -1,62 +1,38 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import axios from 'axios';
-import { getAllCates, getProductByCate } from '../../api/app';
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { getProductByCate, getAllCates } from '../../api/app';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
-const CustomerPage = () => {
-    var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
-    const [cateId, setCateId] = useState("")
-    const [order, setOrders] = useState({
-        productId: 0,
-        title: '',
-        price: 0,
-        quantity: 1,
-        category: '',
-        sellerId: 0
-    })
-
+const CategoryPage = () => {
+    var imageBasePath = window.location.protocol+ "//" + window.location.host + "/images/";
     const [products, setProducts] = useState([])
-    const handleChange = ({currentTarget: input}) => {
-        setOrders({...order, [input.name]: input.value})
-    }
+    const {id} = useParams()
 
-    const [categories, setCategories] = useState([])
-    useEffect(() => {
-        fetchProduct()
-        fetchCategories()
-      }, []);
-    
-    function fetchProduct() {
-        fetch(`http://localhost:4000/product`)
+    function fetchProductByCate() {
+        fetch(`http://localhost:4000/getProductByCate/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          setProducts(data);
-        });
-    } 
+            setProducts(data)
+        })
+    }
+    const [categories, setCategories] = useState([])
+    const [cateId, setCateId] = useState("")
+    const navigate = useNavigate()
     function fetchCategories() {
         getAllCates().then(res => {
             setCategories(res.cate)
         })
     }
+    useEffect(() => {
+        fetchCategories()
+        fetchProductByCate()
+    }, [])
 
-    const config = {
-        headers: {
-            "Content-Type": 'multipart/form-data'
-        }
+    function handleSubmit(id) {
+        navigate(`/customer/getProductByCate/${id}`)
+        fetchProductByCate(id)
+        window.location.reload()
     }
-
-    const addToCart = async (e) => {
-        e.preventDefault();
-        console.log(order)
-        try {
-            await axios
-            .post("http://localhost:4000/addToCart", order, config)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
+    console.log(products)
     return (
         <div className='products'>
             <div class="headerLazada">
@@ -94,14 +70,13 @@ const CustomerPage = () => {
                     <div class="col-md-12">
                         <div class="homepage btn-group" role="group">
                             {categories && categories.map(cate => (
-                                <NavLink to={`/customer/getProductByCate/${cate._id}`}>
-                                    <button type="button" class="btn btn-outline-info" onClick={() => setCateId(cate._id)}>{cate.name}
+                                // <NavLink to={`/customer/getProductByCate/${cate._id}`}>
+                                    <button type="button" class="btn btn-outline-info" onClick={() => handleSubmit(cate._id)}>{cate.name}
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
                                         </svg>
                                     </button>
-                                </NavLink>
-                               
+                                // </NavLink>
                             ))}
                         </div>
                     </div>
@@ -112,7 +87,7 @@ const CustomerPage = () => {
                 <div class="row g-2">
                     {products && products.map(item => (
                          <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                         {/* <a class="card-block stretched-link text-decoration-none " href> */}
+                         <a class="card-block stretched-link text-decoration-none " href>
                              <img class="card-img-top" src={imageBasePath + item.image} alt="Card image cap" />
                              <div class="card-body">
                                  <h5 class="card-title">{item.title}</h5>
@@ -120,28 +95,24 @@ const CustomerPage = () => {
                                  <p class="card-text">{item.price}</p>
                                  {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
                              </div>
-                             {/* <form onSubmit={addToCart}>
-                                <input type="hidden" name="productId" value={item.id} onChange={handleChange}/>
-                                <input type="hidden" name="title" value={item.title} onChange={handleChange}/>
-                                <input type="hidden" name="price" value={item.price} onChange={handleChange}/>
-                                <input type="hidden" name="quantity" value="1" onChange={handleChange}/>
-                                <input type="hidden" name="categrory" value={item.category} onChange={handleChange}/>
-                                <input type="hidden" name="sellerId" value={item.sellerId} onChange={handleChange}/>
-                             </form> */}
-                            <NavLink to={`/customer/cartForm/${item.id}`}>
-                                <button type="button" class="btn btn-primary">
-                                    Add to Cart
-                                </button>
-                            </NavLink>
-                            
-                            
-                         {/* </a> */}
+                             <form action="add-to-cart" method="post">
+                                <input type="hidden" name="id" value={item.id} />
+                                <input type="hidden" name="name" value={item.title} />
+                                <input type="hidden" name="price" value={item.price} />
+                                <input type="hidden" name="categrory" value={item.category} />
+                                <input type="hidden" name="sellerid" value={item.sellerId} />
+                                <input type="hidden" name="quantity" value="1" />
+
+                                <input type="submit" value='Add to cart' class="btn btn-primary"></input>
+                             </form>
+                         </a>
                      </div>
                     ))}
                 </div>
             </div>
         </div>
+        
     );
 }
 
-export default CustomerPage;
+export default CategoryPage;
