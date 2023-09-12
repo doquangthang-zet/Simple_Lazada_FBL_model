@@ -179,10 +179,4 @@ select count(quantity) from warehouse join product_inventory
 on wId = warehouse_id
 where warehouse.wName = "WC";
 
-select * from warehouse
-order by volume desc
-limit 1;
-
-select length * width * height as productVolume 
-from product
-where id = 2;
+SELECT * FROM product where title like '%sam%';
