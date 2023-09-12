@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
-import { getAllCates, saveNewCartItem } from '../../api/app';
+import { getAllCates, getProductByCate, saveNewCartItem } from '../../api/app';
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const CustomerPage = () => {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
-    const [q, setQ] = useState("")
+    const [cateId, setCateId] = useState("")
     const [order, setOrders] = useState({
         productId: 0,
         quantity: 1,
         customerId: 0
     })
+
     const [products, setProducts] = useState([])
+
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState('')
     const [search, setSearch] = useState('')
@@ -72,8 +74,6 @@ const CustomerPage = () => {
         .then((res) => res.json())
         .then((data) => {
           setProducts(data);
-          console.log(data)
-        //   data.filter((data)=> data.title.includes(""))
         });
     } 
     function fetchCategories() {
@@ -133,12 +133,13 @@ const CustomerPage = () => {
             console.log(err)
         }
     }
+
     return (
         <div className='products'>
             <div class="headerLazada">
             <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
                 <div class="container">
-                    <a class="navbar-brand col-3" href="#"><img src={imageBasePath + "lazada-logo.jpg"} class="logo" alt="logo" style={{width: 6.5+ 'em', height: 4 + 'em'}}/></a>
+                    <a class="navbar-brand col-3" href="/customer"><img src={imageBasePath + "lazada-logo.jpg"} class="logo" alt="logo" style={{width: 6.5+ 'em', height: 4 + 'em'}}/></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>

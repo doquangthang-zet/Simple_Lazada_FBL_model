@@ -56,7 +56,7 @@ const Cart = () => {
         .then((res) => res.json())
         .then((data) => {
           setProducts(data);
-          console.log(data)
+        //   console.log(data)
         });
     } 
 
@@ -65,6 +65,7 @@ const Cart = () => {
         axios.get('http://localhost:4000/cart', {params: {id: userId}})
         .then((res) => {
             setCartItems(res.data);
+            console.log(res.data)
         })
     }
 
@@ -123,33 +124,6 @@ const Cart = () => {
                 {/* </Link> */}
                 
             </div>
-            {
-                auth ? 
-                <div>
-                    <h3>You are authorized {name} Role: {role} Id: {userId}</h3>
-                    <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
-                    {
-                        role === "seller" && (
-                        <NavLink to='/seller/home'>
-                            <button type="button" class="actionBtn">Seller</button>
-                        </NavLink>
-                        )
-                    }
-                    
-                    {
-                        role === "admin" && (
-                        <NavLink to='/admin/category'>
-                            <button type="button" class="actionBtn">Admin</button>
-                        </NavLink>
-                    )
-                    }
-                </div>
-                :
-                <div>
-                    <h3>{msg}</h3>
-                    <Link to="/login" className="btn btn-primary">Login</Link>
-                </div>
-            }
         </div>
     );
 }

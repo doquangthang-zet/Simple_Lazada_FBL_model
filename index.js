@@ -295,6 +295,23 @@ app.get("/product", (req, res) => {
   });
 });
 
+app.get("/getProductByCate/:id", (req, res) => {
+  const cateId = req.params.id;
+  const q = "SELECT * FROM product WHERE category = ?";
+  connection.query(q, cateId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+})
+
+// app.get("/cart", (req, res) => {
+//   const q="SELECT * FROM cart";
+//   connection.query(q,(err,data) => {
+//     if (err) return res.json(err);
+//     return res.json(data)
+//   })
+// })
+
 //create product
 app.post("/createProduct", upload.single("image"), (req, res) => {
   // console.log(req.file.filename)
