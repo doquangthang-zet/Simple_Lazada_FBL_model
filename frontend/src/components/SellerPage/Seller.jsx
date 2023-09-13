@@ -19,7 +19,7 @@ export default function Seller() {
                 <Routes>
                     <Route path='/home' element={<SellerPage />} />
                     <Route path='/products' element={<SellerProducts />} />
-                    <Route path='/orders' element={<SellerInboundOrders />} />
+                    <Route path='/inbound' element={<SellerInboundOrders />} />
                     <Route path='/newProduct' element={<SellerCreateProduct />} />
                     <Route path='/editProduct/:id' element={<SellerEditProduct />} />
                 </Routes>

@@ -73,7 +73,7 @@ export default function SellerCreateProduct() {
         console.log(productProperties)
         try {
             await axios.post("http://localhost:4000/createProduct", product, config)
-            navigate("/seller/products");
+            navigate(`/seller/${id}/products`);
           } catch (err) {
             console.log(err)
           }  // fetchProduct()

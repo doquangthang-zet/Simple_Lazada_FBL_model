@@ -15,7 +15,6 @@ export default function WarehouseMoveProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [maxQuantity, setMaxQuantity] = useState(0);
-  const [mess, setMess] = useState();
 
   useEffect(() => {
     fetch(`http://localhost:4000/getWarehouseProduct/${id}`)
@@ -43,7 +42,6 @@ export default function WarehouseMoveProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(product);
     try {
       await axios
         .put(`http://localhost:4000/moveProduct/${oldWarehouse}`, product)

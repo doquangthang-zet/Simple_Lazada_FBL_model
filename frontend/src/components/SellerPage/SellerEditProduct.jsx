@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function SellerEditProduct() {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
     const params = useParams();
+    const [id, setId] = useState(params.sellerId)
     const [productId, setProductId] = useState(params.id)
     const [categories, setCategories] = useState([])
     const [productProperties, setProductProperties] = useState({})
@@ -92,7 +93,7 @@ export default function SellerEditProduct() {
         console.log(product)
         console.log(productProperties)
         updateProduct(productId, product)
-        navigate("/seller/products");
+        navigate(`/seller/${id}/products`);
         // try {
         //     await axios.post("http://localhost:4000/createProduct", product, config)
         //     navigate("/seller/products");

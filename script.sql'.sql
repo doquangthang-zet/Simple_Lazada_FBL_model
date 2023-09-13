@@ -371,3 +371,12 @@ grant select, insert, update, delete on lazada.outbound_order to customer_role;
 grant customer_role to 'customer'@'localhost';
 set default role 'customer_role'@'%' to 'customer'@'localhost';
 flush privileges;
+=======
+drop procedure if exists getSellerProduct;
+delimiter &&
+create procedure getSellerProduct(sid int)
+begin
+    select id, title from product where sellerId = sid;
+end &&
+delimiter ;  
+
