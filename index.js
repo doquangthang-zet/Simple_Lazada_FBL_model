@@ -38,7 +38,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "root",
   database: "lazada",
 });
 
@@ -344,6 +344,15 @@ app.post("/createProduct", upload.single("image"), (req, res) => {
     return res.json("Product created successfully!");
   });
 });
+
+// get product list
+app.get("/product", (req, res) => {
+  const q = "SELECT * FROM product"
+  connection.query(q, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+})
 
 //delete product
 app.delete("/deleteProduct/:id", (req, res) => {
