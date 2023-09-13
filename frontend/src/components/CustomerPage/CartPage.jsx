@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
+import { checkQuantity, deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
 import axios from "axios";
 // import Header from './Layout/Header'
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -84,7 +84,7 @@ const Cart = () => {
 
   let total = 0;
   for (const proId of cartItems) {
-    const price = products.find((p) => p.id === proId.productId)?.price || 0;
+    const price = products.find((p) => p.id === proId.productId)?.price * proId.quantity || 0;
     total += price;
   }
 
@@ -108,6 +108,7 @@ const Cart = () => {
   };
 
   function checkout() {
+    checkQuantity(userId).then(res => console.log(res))
     sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
     navigate("/checkout");
   }

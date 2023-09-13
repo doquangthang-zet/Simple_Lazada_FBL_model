@@ -38,7 +38,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "",
   database: "lazada",
 });
 
@@ -586,6 +586,15 @@ app.get("/filteredData", (req, res) => {
   }
   connection.query(q, queryArray, (err,data) => {
     if (err) return res.json(err);
+    return res.json(data)
+  })
+})
+
+app.put("/checkQuantity/:id", (req, res) => {
+  const q = "CALL checkout(?)";
+  const userId = req.params.id;
+  connection.query(q, userId, (err, data) => {
+    if(err) return res.json(err)
     return res.json(data)
   })
 })

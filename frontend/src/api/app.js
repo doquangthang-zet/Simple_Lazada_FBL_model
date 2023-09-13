@@ -133,6 +133,15 @@ export const updateCartItem = async (itemId, data) => {
     }
 }
 
+export const checkQuantity = async (userId) => {
+    try {
+        const res = axios.put(`${baseUrl}checkQuantity/${userId}`);
+        return (await res).data;
+    } catch (error) {
+        return null;
+    }
+}
+
 export const getProductByCate = async (cateId) => {
     try {
         const res = await axios.get(`${baseUrl}getProductByCate/${cateId}`)
