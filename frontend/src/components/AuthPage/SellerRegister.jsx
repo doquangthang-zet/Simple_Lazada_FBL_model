@@ -19,7 +19,7 @@ function SellerRegister() {
             if(res.data.Status === "Success") {
                 navigate("/login")
             } else {
-                alert("ERROR")
+                alert(res.data.Error)
             }
         })
     }

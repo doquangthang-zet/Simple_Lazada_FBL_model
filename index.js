@@ -121,18 +121,31 @@ app.get("/", verifyUser, (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const sql =
-    "INSERT INTO user (`name`, `role`, `email`, `password`) VALUES (?)";
+  var mailformat = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+  const getUserSql = "SELECT * FROM user WHERE email = ?";
 
-  bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
-    if (err) return res.json({ Error: "Error for hashing password!" });
+  connection.query(getUserSql, [req.body.email], (err, data) => {
+    if (err) return res.json({ Error: "Failed to find email in system" });
+    if (req.body.email.match(mailformat)) {
+      if (data.length === 0) {
+        const sql = "INSERT INTO user (`name`, `role`, `email`, `password`) VALUES (?)";
 
-    const values = [req.body.name, req.body.role, req.body.email, hash];
+        bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
+          if (err) return res.json({ Error: "Error for hashing password!" });
 
-    connection.query(sql, [values], (error, result) => {
-      if (error) return res.json({ Error: "Failed to insert data to server" });
-      return res.json({ Status: "Success" });
-    });
+          const values = [req.body.name, req.body.role, req.body.email, hash];
+
+          connection.query(sql, [values], (error, result) => {
+            if (error) return res.json({ Error: "Failed to insert data to server" });
+            return res.json({ Status: "Success" });
+          });
+        });
+      } else {
+        return res.json({ Error: "This email is already exist!" });
+      }
+    } else {
+      return res.json({ Error: "This email is invalid format!" });
+    }
   });
 });
 

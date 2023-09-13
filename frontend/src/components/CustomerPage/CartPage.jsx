@@ -17,7 +17,7 @@ const Cart = () => {
   const [auth, setAuth] = useState(false);
   const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("user"))?.id || 0
+    JSON.parse(sessionStorage.getItem("user"))?.id || 0
   );
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -25,7 +25,7 @@ const Cart = () => {
     axios
       .get("http://localhost:4000/logout")
       .then((res) => {
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
         window.location.reload(true);
       })
       .catch((err) => console.log(err));
@@ -43,16 +43,17 @@ const Cart = () => {
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
-          localStorage.setItem("user", JSON.stringify(res.data));
+          sessionStorage.setItem("user", JSON.stringify(res.data));
           console.log(res.data);
           setAuth(true);
           setUserId(res.data.id);
           setName(res.data.name);
           setRole(res.data.role);
         } else {
-          localStorage.removeItem("user");
+          sessionStorage.removeItem("user");
           setAuth(false);
           setMsg(res.data.Error);
+          navigate("/login")
         }
       })
       .then((err) => console.log(err));
@@ -107,7 +108,7 @@ const Cart = () => {
   };
 
   function checkout() {
-    localStorage.setItem("cart", JSON.stringify([cartItems, total]));
+    sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
     navigate("/checkout");
   }
 

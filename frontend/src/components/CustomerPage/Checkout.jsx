@@ -17,14 +17,14 @@ function Checkout() {
   const [auth, setAuth] = useState(false);
   const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("user")).id
+    JSON.parse(sessionStorage.getItem("user")).id
   );
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [outboundOrder, setOutboundOrder] = useState([]);
   let total = 0;
   const [order, setOrder] = useState({
-    total: JSON.parse(localStorage.getItem("cart"))[1],
+    total: JSON.parse(sessionStorage.getItem("cart"))[1],
     customer_id: userId,
     f_name: "",
     l_name: "",
@@ -37,7 +37,7 @@ function Checkout() {
     axios
       .get("http://localhost:4000/logout")
       .then((res) => {
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
         window.location.reload(true);
       })
       .catch((err) => console.log(err));
@@ -57,7 +57,7 @@ function Checkout() {
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
-          localStorage.setItem("user", JSON.stringify(res.data));
+          sessionStorage.setItem("user", JSON.stringify(res.data));
           console.log(res.data);
           setAuth(true);
           // setUserId(res.data.id)
@@ -66,6 +66,7 @@ function Checkout() {
         } else {
           setAuth(false);
           setMsg(res.data.Error);
+          navigate("/login")
         }
       })
       .then((err) => console.log(err));
@@ -93,7 +94,7 @@ function Checkout() {
       if (res.data.length > 0) {
         setOutboundOrder(res.data);
         setOrder({
-          total: JSON.parse(localStorage.getItem("cart"))[1],
+          total: JSON.parse(sessionStorage.getItem("cart"))[1],
           customer_id: userId,
           f_name: res.data[0].f_name,
           l_name: res.data[0].l_name,
@@ -254,7 +255,7 @@ function Checkout() {
 
                 <hr class="mb-4" />
                 <button class="actionBtn" type="submit">
-                  Checkout
+                  Place Order
                 </button>
               </form>
             </div>

@@ -44,6 +44,7 @@ export default function SellerCreateProduct() {
                 setProduct( { ...product, ["sellerId"]: res.data.id });
             } else {
                 setMsg(res.data.Error)
+                navigate("/login")
             }
         })
         .then(err => console.log(err))
