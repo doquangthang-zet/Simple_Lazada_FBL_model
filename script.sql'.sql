@@ -299,13 +299,21 @@ create function check_inventory_quantity(pid int, pquantity int)
 returns bool reads sql data
 begin
 	declare in_check bool;
-    
+	declare `_rollback` bool default 0;
+	declare continue handler for sqlexception set `_rollback` = 1;
+
+	start transaction;
+	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
     if ((select sum(quantity) from product_inventory where product_id = pid) >= pquantity) then
 		set in_check = 1;
         else set in_check = 0;
         end if;
-        
 	return in_check;
+			if `_rollback` then
+				rollback;
+			else 
+				commit;
+			end if;
 end $$
 delimiter ;
 
@@ -327,19 +335,33 @@ begin
 	declare item_count int default 0;
     declare itemId int;
     declare itemQuantity int;
+    declare pid int;
+    declare `_rollback` bool default 0;
+declare continue handler for sqlexception set `_rollback` = 1;
+
+start transaction;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
     repeat
-		set itemId = (select productId from cart_items where customer_id = customerId 
-					group by productId order by productId limit item_count, 1);
-		set itemQuantity = (select sum(quantity) from cart_items where customer_id = customerId and productId = itemId);
+		set itemId = (select id from cart_items where customer_id = customerId 
+					group by id order by id limit item_count, 1);                    
+		set itemQuantity = (select quantity from cart_items where customer_id = customerId and id = itemId);
+        set pid = (select productId from cart_items where id= itemId);
 		if (not check_inventory_quantity(itemId, itemQuantity)) then 
-			delete from cart_items where customer_id = customerId and productId = itemId;
+			delete from cart_items where id = itemId;
             else set item_count = item_count + 1;
             end if;
-            until item_count > (select count(*) from cart_items where customer_id = customerId)
+            until item_count = (select count(*) from cart_items where customer_id = customerId)
             end repeat;
+            
+			if `_rollback` then
+				rollback;
+			else 
+				commit;
+			end if;
 end $$
 delimiter ;
 
+drop procedure checkout;
 select * from product_inventory;
 select * from cart_items;
 call checkout(5);
@@ -444,4 +466,3 @@ begin
 end &&
 delimiter ;  
 
-select * from user;
