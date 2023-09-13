@@ -327,19 +327,22 @@ begin
 	declare item_count int default 0;
     declare itemId int;
     declare itemQuantity int;
+    declare pid int;
     repeat
-		set itemId = (select productId from cart_items where customer_id = customerId 
-					group by productId order by productId limit item_count, 1);
-		set itemQuantity = (select sum(quantity) from cart_items where customer_id = customerId and productId = itemId);
+		set itemId = (select id from cart_items where customer_id = customerId 
+					group by id order by id limit item_count, 1);                    
+		set itemQuantity = (select quantity from cart_items where customer_id = customerId and id = itemId);
+        set pid = (select productId from cart_items where id= itemId);
 		if (not check_inventory_quantity(itemId, itemQuantity)) then 
-			delete from cart_items where customer_id = customerId and productId = itemId;
+			delete from cart_items where id = itemId;
             else set item_count = item_count + 1;
             end if;
-            until item_count > (select count(*) from cart_items where customer_id = customerId)
+            until item_count = (select count(*) from cart_items where customer_id = customerId)
             end repeat;
 end $$
 delimiter ;
 
+drop procedure checkout;
 select * from product_inventory;
 select * from cart_items;
 call checkout(5);
