@@ -45,11 +45,13 @@ foreign key (product_id) references product(id) );
 
 drop table if exists cart_items, outbound_order;
 
+
 create table cart_items (
 id int unique auto_increment,
 productId int,
 quantity int,
 customer_id int,
+warehouse_no json,
 primary key (id));
 
 create table outbound_order (
@@ -284,33 +286,95 @@ ADD INDEX idx_product_description (description);
 ALTER TABLE product
 ADD INDEX idx_product_category (category);
 
--- ALTER TABLE product
--- PARTITION BY RANGE(price) (
---   PARTITION p0 VALUES LESS THAN 1000,
---   PARTITION p1 VALUES LESS THAN 2000,
---   PARTITION p2 VALUES LESS THAN 3000,
---   PARTITION p3 VALUES LESS THAN MAXVALUE
--- );
+ALTER TABLE product
+PARTITION BY RANGE( cast(price as unsigned integer)) (
+  PARTITION p0 VALUES LESS THAN (1000),
+  PARTITION p1 VALUES LESS THAN (2000),
+  PARTITION p2 VALUES LESS THAN (3000),
+  PARTITION p3 VALUES LESS THAN MAXVALUE
+);
+
+delimiter $$
+create function check_inventory_quantity(pid int, pquantity int)
+returns bool reads sql data
+begin
+	declare in_check bool;
+    
+    if ((select sum(quantity) from product_inventory where product_id = pid) >= pquantity) then
+		set in_check = 1;
+        else set in_check = 0;
+        end if;
+        
+	return in_check;
+end $$
+delimiter ;
+
+delimiter $$
+create procedure deduct_inventory(pid int, pquantity int)
+begin
+	declare inventory_id int;
+    declare warehouseID int;
+	select id into inventory_id from product_inventory where product_id = pid group by product_id limit 0, 1;
+    update product_inventory
+
+
+end $$
+delimiter ;
+
+delimiter $$
+create procedure checkout(customerId int) 
+begin
+	declare item_count int default 0;
+    declare itemId int;
+    declare itemQuantity int;
+    repeat
+		set itemId = (select productId from cart_items where customer_id = customerId 
+					group by productId order by productId limit item_count, 1);
+		set itemQuantity = (select sum(quantity) from cart_items where customer_id = customerId and productId = itemId);
+		if (not check_inventory_quantity(itemId, itemQuantity)) then 
+			delete from cart_items where customer_id = customerId and productId = itemId;
+            else set item_count = item_count + 1;
+            end if;
+            until item_count > (select count(*) from cart_items where customer_id = customerId)
+            end repeat;
+end $$
+delimiter ;
+
+select * from product_inventory;
+select * from cart_items;
+call checkout(5);
+
 
 -- ORDER AND PLACED ORDER TRANSACTION
 delimiter $$
 create procedure placeOrder(total double, customer_id int, f_name varchar(255), l_name varchar(255), email varchar(255), address varchar(255), delivery_status bool)
 begin
+	declare inventoryPid int;
+    declare orderPid int;
+    declare inventory_count int default 0;
+    declare item_count int default 0;
+-- declare `_rollback` bool default 0;
+-- declare continue handler for sqlexception set `_rollback` = 1;
 
-declare `_rollback` bool default 0;
-declare continue handler for sqlexception set `_rollback` = 1;
+-- start transaction;
+-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
-start transaction;
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+select productId, sum(quantity) from cart_items where customer_id = 3 group by productId;
 
-INSERT INTO outbound_order (`total`, `customer_id`, `f_name`, `l_name`, `email`, `address`, `delivery_status`) VALUES
-(total, customer_id, f_name, l_name, email, address, delivery_status);
 
-if `_rollback` then
-	rollback;
-else 
-	commit;
-end if;
+repeat 
+set orderPid = (select productId from cart_items where cart_items.customer_id = customer_id limit item_count, 1);
+
+
+
+-- INSERT INTO outbound_order (`total`, `customer_id`, `f_name`, `l_name`, `email`, `address`, `delivery_status`) VALUES
+-- (total, customer_id, f_name, l_name, email, address, delivery_status);
+
+-- if `_rollback` then
+-- 	rollback;
+-- else 
+-- 	commit;
+-- end if;
 
 end $$
 delimiter ;
@@ -371,7 +435,7 @@ grant select, insert, update, delete on lazada.outbound_order to customer_role;
 grant customer_role to 'customer'@'localhost';
 set default role 'customer_role'@'%' to 'customer'@'localhost';
 flush privileges;
-=======
+
 drop procedure if exists getSellerProduct;
 delimiter &&
 create procedure getSellerProduct(sid int)
@@ -380,3 +444,4 @@ begin
 end &&
 delimiter ;  
 
+select * from user;
