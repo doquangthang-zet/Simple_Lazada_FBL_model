@@ -299,13 +299,21 @@ create function check_inventory_quantity(pid int, pquantity int)
 returns bool reads sql data
 begin
 	declare in_check bool;
-    
+	declare `_rollback` bool default 0;
+	declare continue handler for sqlexception set `_rollback` = 1;
+
+	start transaction;
+	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
     if ((select sum(quantity) from product_inventory where product_id = pid) >= pquantity) then
 		set in_check = 1;
         else set in_check = 0;
         end if;
-        
 	return in_check;
+			if `_rollback` then
+				rollback;
+			else 
+				commit;
+			end if;
 end $$
 delimiter ;
 
