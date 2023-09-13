@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { deleteCartItemsByID, deleteOrderByID } from "../../api/app";
+import { deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
 import axios from "axios";
 // import Header from './Layout/Header'
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -87,6 +87,25 @@ const Cart = () => {
     total += price;
   }
 
+  const addQuantity = (item) => {
+    let newItem = {productId: item.productId, quantity: item.quantity + 1, customerId: item.customer_id}
+    updateCartItem(item.id, newItem)
+    window.location.reload();
+  };
+
+  const minusQuantity = (item) => {
+    let newItem = {productId: item.productId, quantity: item.quantity - 1, customerId: item.customer_id}
+
+    if(newItem.quantity === 0) {
+      deleteCartItemsByID(item.id)
+      updateCartItem(item.id, newItem)
+      window.location.reload();
+    } else {
+      updateCartItem(item.id, newItem)
+      window.location.reload();
+    }
+  };
+
   function checkout() {
     localStorage.setItem("cart", JSON.stringify([cartItems, total]));
     navigate("/checkout");
@@ -125,7 +144,13 @@ const Cart = () => {
                           ?.price
                       }
                     </td>
-                    <td>{item.quantity}</td>
+                    <td>
+                      <div className='d-flex align-items-center p-2'>
+                          <BsPlusSquare className="m-2" onClick={() => addQuantity(item)} />
+                          {item.quantity}
+                          <PiMinusSquare className="m-2" onClick={() => minusQuantity(item)} />
+                      </div>
+                    </td>
                     <td>
                       <button
                         type="button"

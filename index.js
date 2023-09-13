@@ -38,7 +38,7 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "",
   database: "lazada",
 });
 
@@ -450,6 +450,34 @@ app.post('/addToCart', function(req, res){
     if (err) return res.json(err);
     return res.json("Added to cart!");
   });
+});
+
+// get single cart item
+app.get("/getOneCartItem", (req, res) => {
+  const userId = req.query.userId;
+  const proId = req.query.proId;
+  console.log(req.query)
+  const q = "SELECT * FROM cart_items WHERE customer_id = ? and productId = ?";
+  connection.query(q, [userId, proId], (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+//edit cart item
+app.put('/editCartItem/:id', function(req, res){
+  const q = "UPDATE cart_items SET `productId` = ?, `quantity` = ?, `customer_id` = ? where id = ?";
+  const id = req.params.id;
+  const values = [
+    req.body.productId,
+    req.body.quantity,
+    req.body.customerId,
+  ];
+  // console.log(req)
+  connection.query(q, [...values, id], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Edit cart item!");
+  }); 
 });
 
 //delete order from cart

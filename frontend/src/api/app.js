@@ -115,6 +115,23 @@ export const saveNewCartItem = async (data) => {
     }
 }
 
+export const getOneCartItems = async (userId, proId) => {
+    try {
+        const res = await axios.get(`${baseUrl}getOneCartItem`, {params: {userId: userId, proId: proId}});
+        return res.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const updateCartItem = async (itemId, data) => {
+    try {
+        const res = axios.put(`${baseUrl}editCartItem/${itemId}`, {...data});
+        return (await res).data;
+    } catch (error) {
+        return null;
+    }
+}
 
 export const getProductByCate = async (cateId) => {
     try {

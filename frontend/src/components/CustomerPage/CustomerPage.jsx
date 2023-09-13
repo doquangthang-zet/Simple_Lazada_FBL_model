@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
-import { getAllCates, getProductByCate, saveNewCartItem } from '../../api/app';
+import { getAllCates, getOneCartItems, getProductByCate, saveNewCartItem, updateCartItem } from '../../api/app';
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const CustomerPage = () => {
@@ -96,17 +96,26 @@ const CustomerPage = () => {
         }
     }
     const add = (id) => {
-        console.log(id)
-        const item = {productId: id, quantity: 1, customerId: userId}
-        console.log(item)
+        // console.log(id)
+        let item = {productId: id, quantity: 1, customerId: userId}
+        // console.log(item)
         setOrders({
             productId: id,
             quantity: 1,
             customerId: userId
         })
-        console.log(order)
-        saveNewCartItem(item)
+        getOneCartItems(userId, id).then(res => {
+            if (res.length > 0) {
+                item.quantity = res[0].quantity + 1
+                updateCartItem(res[0].id, item)
         fecthCartItems()
+            } else {
+                saveNewCartItem(item)
+                fecthCartItems()
+            }
+        })
+        // console.log(order)
+        
         // addToCart()
     }
 
