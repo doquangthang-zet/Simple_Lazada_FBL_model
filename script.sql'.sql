@@ -1,4 +1,4 @@
-create database lazada;
+-- create database lazada;
 use lazada;
 
 drop table if exists warehouse, product_inventory, product, user;

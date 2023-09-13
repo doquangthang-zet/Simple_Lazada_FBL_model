@@ -27,7 +27,7 @@ function App() {
         <Route path='/sellerRegister' element={<SellerRegister />} />
         <Route path='/adminRegister' element={<AdminRegister />} />
         <Route path='/seller/*' element={<Seller />} />
-        {/* <Route path = '/customer/*' element={<Customer />} /> */}
+        <Route path = '/customer/*' element={<Customer />} />
         <Route path="/admin/*" element={<WHAdmin />} />
       </Routes>
     </div>

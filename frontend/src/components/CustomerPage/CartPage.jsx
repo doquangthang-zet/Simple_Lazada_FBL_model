@@ -104,7 +104,7 @@ const Cart = () => {
                         <tbody>
                             {cartItems && cartItems.map(item => (
                                 <tr>
-                                    <th scope="row">{item.id}</th>
+                                    <th scope="row">{item.productId}</th>
                                     <td>{products?.filter(p => p.id == item.productId)[0]?.title}</td>
                                     <td>{products?.filter(p => p.id == item.productId)[0]?.price}</td>
                                     <td>{item.quantity}</td>
