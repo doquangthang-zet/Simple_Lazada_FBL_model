@@ -1,4 +1,4 @@
-create database lazada;
+-- create database lazada;
 use lazada;
 
 drop table if exists warehouse, product_inventory, product, user;
@@ -31,8 +31,7 @@ height double,
 category varchar(45),
 properties json,
 sellerId INT,
-createdAt DATETIME,
-primary key (id));
+createdAt DATETIME);
 
 create table product_inventory (
 id int auto_increment unique,
@@ -43,6 +42,26 @@ total_volume double,
 primary key (id),
 foreign key (warehouse_id) references warehouse(wId),
 foreign key (product_id) references product(id) );
+
+drop table if exists cart_items, outbound_order;
+
+create table cart_items (
+id int unique auto_increment,
+productId int,
+quantity int,
+customer_id int,
+primary key (id));
+
+create table outbound_order (
+id int unique auto_increment,
+total double,
+customer_id int,
+f_name varchar(255),
+l_name varchar(255),
+email varchar(255),
+address varchar(255),
+delivery_status bool,
+primary key (id));
 
 insert into warehouse(wName, address, volume) values 
 ("WC", "28 naufd stress, basdf ward, ha tinh province", 100000),
@@ -56,6 +75,14 @@ insert into product_inventory(product_id, warehouse_id, quantity, total_volume) 
 (1, 2, 200, 900),
 (2, 2, 100, 0.02),
 (1, 1, 100, 450);
+
+insert into cart_items (`productId`, `quantity`, `customer_id`) values
+(1, 3, 7);
+
+insert into outbound_order (`total`, `customer_id`, `f_name`,`l_name`, `email`, `address`, `delivery_status`) values 
+(3000, 7, "Thang", "Do", "thang@gmail.com", "123 Nguyen Van Linh", false);
+
+select * from user;
 
 
 drop view if exists product_volume;
@@ -245,6 +272,106 @@ begin
 end &&		
 delimiter ;  
 
+-- OPTIMIZATION FOR BROWSING
+show indexes from product;
+
+ALTER TABLE product
+ADD INDEX idx_product_title (title);
+
+ALTER TABLE product
+ADD INDEX idx_product_description (description);
+
+ALTER TABLE product
+ADD INDEX idx_product_category (category);
+
+-- ALTER TABLE product
+-- PARTITION BY RANGE(price) (
+--   PARTITION p0 VALUES LESS THAN 1000,
+--   PARTITION p1 VALUES LESS THAN 2000,
+--   PARTITION p2 VALUES LESS THAN 3000,
+--   PARTITION p3 VALUES LESS THAN MAXVALUE
+-- );
+
+-- ORDER AND PLACED ORDER TRANSACTION
+delimiter $$
+create procedure placeOrder(total double, customer_id int, f_name varchar(255), l_name varchar(255), email varchar(255), address varchar(255), delivery_status bool)
+begin
+
+declare `_rollback` bool default 0;
+declare continue handler for sqlexception set `_rollback` = 1;
+
+start transaction;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO outbound_order (`total`, `customer_id`, `f_name`, `l_name`, `email`, `address`, `delivery_status`) VALUES
+(total, customer_id, f_name, l_name, email, address, delivery_status);
+
+if `_rollback` then
+	rollback;
+else 
+	commit;
+end if;
+
+end $$
+delimiter ;
+
+drop procedure if exists placeOrder;
+
+select *, sum(c.quantity), sum(p.quantity) from product_inventory p join cart_items c on p.product_id = c.productId group by c.productId, p.product_id;
+
+
+
+-- USER MANAGEMENT
+select * from mysql.user;
+-- ADMIN
+create user 'admin'@'localhost' identified by 'admin';
+
+ALTER USER 'admin'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
+show databases;
+
+create role admin_role;
+
+grant select, insert, update, delete on lazada.warehouse to admin_role;
+grant select, insert, update, delete on lazada.product_inventory to admin_role;
+grant select, insert, update, delete on lazada.product to admin_role;
+
+grant admin_role to 'admin'@'localhost';
+set default role 'admin_role'@'%' to 'admin'@'localhost';
+flush privileges;
+
+-- SELLER
+create user 'seller'@'localhost' identified by 'seller';
+
+ALTER USER 'seller'@'localhost' IDENTIFIED WITH mysql_native_password BY 'seller';
+show databases;
+
+create role seller_role;
+
+grant select, insert, update, delete on lazada.warehouse to seller_role;
+grant select, insert, update, delete on lazada.product_inventory to seller_role;
+grant select, insert, update, delete on lazada.product to seller_role;
+
+grant seller_role to 'seller'@'localhost';
+set default role 'seller_role'@'%' to 'seller'@'localhost';
+flush privileges;
+
+-- CUSTOMER
+create user 'customer'@'localhost' identified by 'customer';
+
+ALTER USER 'customer'@'localhost' IDENTIFIED WITH mysql_native_password BY 'customer';
+show databases;
+
+create role customer_role;
+
+grant select, insert, update, delete on lazada.product_inventory to customer_role;
+grant select, insert, update, delete on lazada.product to customer_role;
+grant select, insert, update, delete on lazada.cart_items to customer_role;
+grant select, insert, update, delete on lazada.outbound_order to customer_role;
+
+grant customer_role to 'customer'@'localhost';
+set default role 'customer_role'@'%' to 'customer'@'localhost';
+flush privileges;
+=======
 drop procedure if exists getSellerProduct;
 delimiter &&
 create procedure getSellerProduct(sid int)
@@ -252,3 +379,4 @@ begin
     select id, title from product where sellerId = sid;
 end &&
 delimiter ;  
+

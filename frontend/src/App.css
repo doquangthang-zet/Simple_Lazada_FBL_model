@@ -124,6 +124,13 @@
   background-color: red;
 }
 
+/* Customer Page*/
+.homepage {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
 .proImage {
   height: 100px;
   width: 100px;

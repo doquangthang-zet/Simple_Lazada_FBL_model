@@ -1,15 +1,15 @@
-create database lazada;
+-- 
 use lazada;
 
 -- User
 DROP TABLE IF EXISTS user;
-CREATE TABLE `lazada`.`user` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
-  `role` VARCHAR(45) NOT NULL,
-  `email` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`));
+CREATE TABLE lazada.`user` (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(45) NOT NULL,
+  role VARCHAR(45) NOT NULL,
+  email VARCHAR(45) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id));
   
 select * from user;
 
@@ -37,6 +37,19 @@ sellerId INT,
 createdAt DATETIME,
 primary key (id));
 
+select * from product;
+
+drop table if exists cart, customer_order;
+create table cart (
+id int unique auto_increment,
+productId int,
+title varchar(225),
+price double,
+quantity int,
+category varchar(45),
+sellerId int,
+primary key (id));
+
 create table product_inventory (
 id int unique auto_increment,
 product_id int,
@@ -52,6 +65,9 @@ insert into warehouse values
 (3, "WC", "28 naufd stress, basdf ward, ha tinh province", 100000),
 (4, "WD", "28 naufd stress, basdf ward, ha tinh province", 250000);
 
+insert into cart values
+(1, 1, "Samsung", "1000",1, "64f95624880a0a5b708de026",4);
+select * from cart;
 
 insert into product values 
 (1, "Samsung", "Galaxy Y", "logo192.png", 1000, 1, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
@@ -69,8 +85,8 @@ create procedure deleteWarehouse(in id int)
 begin
 	declare stock int;
     
-	declare `_rollback` int default 0;
-    declare CONTINUE HANDLER FOR SQLEXCEPTION set `_rollback` = 1;
+	declare _rollback int default 0;
+    declare CONTINUE HANDLER FOR SQLEXCEPTION set _rollback = 1;
 
     set session transaction isolation level serializable;
     start transaction;
@@ -81,7 +97,7 @@ begin
 		delete from warehouse where wId = id;
         end if;
 		
-        if `_rollback` = 1 then rollback;
+        if _rollback = 1 then rollback;
         else commit;
         end if;
 end &&
@@ -92,8 +108,8 @@ create procedure createWarehouse(wname varchar(50), waddress varchar(225), wvolu
 begin 
 	declare lastId int;
     declare newId int;
-	declare `_rollback` int default 0;
-    declare CONTINUE HANDLER FOR SQLEXCEPTION set `_rollback` = 1;
+	declare _rollback int default 0;
+    declare CONTINUE HANDLER FOR SQLEXCEPTION set _rollback = 1;
 	
 	set session transaction isolation level serializable;
     start transaction;
@@ -104,7 +120,7 @@ begin
 		insert into warehouse values
         (lastId + 1 ,wname, waddress, wvolume);
          
-		if `_rollback` = 1 then rollback;
+		if _rollback = 1 then rollback;
         else commit;
         end if;
 end &&
@@ -141,11 +157,11 @@ OK:begin
     
     if totalProductVolume <= biggestWhVolume then
 		if not exists (select * from product_inventory where product_id = proId and biggestWhId = warehouse_id) then
-			insert into product_inventory (`product_id`, `warehouse_id`, `quantity`) values (proId, biggestWhId, quantity);
-			update warehouse set `volume` = biggestWhVolume - totalProductVolume where wid = biggestWhId;
+			insert into product_inventory (product_id, warehouse_id, quantity) values (proId, biggestWhId, quantity);
+			update warehouse set volume = biggestWhVolume - totalProductVolume where wid = biggestWhId;
 		else 
-			update product_inventory set `quantity` = product_inventory.quantity + quantity where product_id = proId and biggestWhId = warehouse_id;
-			update warehouse set `volume` = biggestWhVolume - totalProductVolume where wid = biggestWhId;
+			update product_inventory set quantity = product_inventory.quantity + quantity where product_id = proId and biggestWhId = warehouse_id;
+			update warehouse set volume = biggestWhVolume - totalProductVolume where wid = biggestWhId;
 		end if;
 	end if;
     
@@ -154,11 +170,11 @@ OK:begin
         set storedProduct = quantity - remainProduct;
         
         if not exists (select * from product_inventory where product_id = proId and biggestWhId = warehouse_id) then
-			insert into product_inventory (`product_id`, `warehouse_id`, `quantity`) values (proId, biggestWhId, storedProduct);
-			update warehouse set `volume` = biggestWhVolume - (storedProduct * productVolume) where wid = biggestWhId;
+			insert into product_inventory (product_id, warehouse_id, quantity) values (proId, biggestWhId, storedProduct);
+			update warehouse set volume = biggestWhVolume - (storedProduct * productVolume) where wid = biggestWhId;
 		else 
-			update product_inventory set `quantity` = product_inventory.quantity + storedProduct where product_id = proId and biggestWhId = warehouse_id;
-			update warehouse set `volume` = biggestWhVolume - (storedProduct * productVolume) where wid = biggestWhId;
+			update product_inventory set quantity = product_inventory.quantity + storedProduct where product_id = proId and biggestWhId = warehouse_id;
+			update warehouse set volume = biggestWhVolume - (storedProduct * productVolume) where wid = biggestWhId;
 		end if;
         
         call selectWarehouse(proId, remainProduct);
@@ -179,4 +195,14 @@ select count(quantity) from warehouse join product_inventory
 on wId = warehouse_id
 where warehouse.wName = "WC";
 
-SELECT * FROM product where title like '%sam%';
+select * from warehouse
+order by volume desc
+limit 1;
+
+select length * width * height as productVolume 
+from product
+where id = 2;
+
+show tables;
+select * from product where category = '64f95624880a0a5b708de026';
+select * from cart;

@@ -38,11 +38,33 @@ mongoose.connection.once("open", () => console.log("Mongodb Connected!")).on("er
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "",
   database: "lazada",
 });
 
-connection.connect((err) => {
+const adminConnection = mysql.createConnection({
+  host: "localhost",
+  user: "admin",
+  password: "admin",
+  database: "lazada",
+});
+
+const sellerConnection = mysql.createConnection({
+  host: "localhost",
+  user: "seller",
+  password: "seller",
+  database: "lazada",
+});
+
+const customerConnection = mysql.createConnection({
+  host: "localhost",
+  user: "customer",
+  password: "customer",
+  database: "lazada",
+});
+
+
+adminConnection.connect((err) => {
   if(err) throw err;
   console.log("Mysql Connected!")
 })
@@ -283,6 +305,23 @@ app.get("/product/:sellerId", (req, res) => {
   });
 });
 
+app.get("/getProductByCate/:id", (req, res) => {
+  const cateId = req.params.id;
+  const q = "SELECT * FROM product WHERE category = ?";
+  connection.query(q, cateId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  })
+})
+
+// app.get("/cart", (req, res) => {
+//   const q="SELECT * FROM cart";
+//   connection.query(q,(err,data) => {
+//     if (err) return res.json(err);
+//     return res.json(data)
+//   })
+// })
+
 //create product
 app.post("/createProduct", upload.single("image"), (req, res) => {
   // console.log(req.file.filename)
@@ -317,7 +356,6 @@ app.delete("/deleteProduct/:id", (req, res) => {
     if (err) return res.json(err);
     image = data[0].image
   });
-
   //Delete the items
   const q = "DELETE FROM product WHERE id = ?";
   connection.query(q, productId, (err, data) => {
@@ -342,7 +380,7 @@ app.get("/getOneProduct/:id", (req, res) => {
   });
 });
 
-// update warehouse
+// update product
 app.put("/editProduct/:id", upload.single("image"), (req, res) => {
   const productId = req.params.id;
 
@@ -377,3 +415,127 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
       return res.json("Product updated successfully!");
     });
 });
+
+// Cart part
+//Get all items from cart
+app.get("/cart", (req, res) => {
+  const userId = req.query.id
+  const q="SELECT * FROM cart_items where customer_id = ?";
+  connection.query(q, userId, (err,data) => {
+    if (err) return res.json(err);
+    return res.json(data)
+  })
+})
+
+//add to cart
+app.post('/addToCart', function(req, res){
+  const q = "INSERT INTO cart_items (`productId`, `quantity`, `customer_id`) VALUES (?)";
+  // const id = rep.body.id;
+  const values = [
+    req.body.productId,
+    req.body.quantity,
+    req.body.customerId,
+  ];
+  console.log(values)
+  connection.query(q, [values], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Added to cart!");
+  });
+});
+
+//delete order from cart
+app.delete("/deleteOrder/:id", (req, res) => {
+  const productId = req.params.id;
+  const q = "DELETE FROM cart_items WHERE id = ?";
+  connection.query(q, productId, (err) => {
+    if (err) return res.json(err);
+    return res.json("Cart deleted!");
+  })
+})
+
+//create order
+app.post('/createOrder', function(req, res){
+  const q = "INSERT INTO outbound_order (`total`, `customer_id`, `f_name`, `l_name`, `email`, `address`, `delivery_status`) VALUES (?)";
+  // const id = rep.body.id;
+  const values = [
+    req.body.total,
+    req.body.customer_id,
+    req.body.f_name,
+    req.body.l_name,
+    req.body.email,
+    req.body.address,
+    req.body.delivery_status,
+  ];
+  console.log(values)
+  connection.query(q, [values], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Placed order!");
+  });
+});
+
+//edit order
+app.put('/editOrder', function(req, res){
+  const q = "UPDATE outbound_order SET `total` = ?, `customer_id` = ?, `f_name` = ?, `l_name` = ?, `email` = ?, `address` = ?, `delivery_status` = ? where customer_id = ?";
+  // const id = rep.body.id;
+  const values = [
+    req.body.total,
+    req.body.customer_id,
+    req.body.f_name,
+    req.body.l_name,
+    req.body.email,
+    req.body.address,
+    req.body.delivery_status,
+  ];
+  console.log(values)
+  connection.query(q, [...values,req.body.customer_id], (err, data) => {
+    if (err) return res.json(err);
+    return res.json("Edit placed order!");
+  });
+});
+
+// get single order info
+app.get("/getOneOrder/:id", (req, res) => {
+  const orderId = req.params.id;
+  const q = "SELECT * FROM outbound_order WHERE customer_id = ?";
+  connection.query(q, orderId, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+app.get("/filteredData", (req, res) => {
+  const search = `%${req.query.search}%`;
+  const filter = req.query.filter;
+  const category = req.query.category;
+  const sort = req.query.sort;
+  let queryArray = []
+  
+  let q="SELECT * FROM product where (title like ? or description like ?)";
+  queryArray.push(search)
+  queryArray.push(search)
+  if (category !== "") {
+    q += " and category = ?";
+    queryArray.push(category)
+  }
+  
+  if (filter === "smaller1000") {
+    q += " and price < 1000";
+  } else if (filter === "larger1000less2000") {
+    q += " and (price >= 1000 and price <= 2000)";
+  } else if (filter === "larger2000") {
+    q += " and price > 2000";
+  }
+  if(sort === "newest") {
+    q += " order by createdAt desc"
+  } else if (sort === "oldest") {
+    q += " order by createdAt asc"
+  } else if (sort === "cheapest") {
+    q += " order by price asc"
+  } else if (sort === "expensive") {
+    q += " order by price desc"
+  }
+  connection.query(q, queryArray, (err,data) => {
+    if (err) return res.json(err);
+    return res.json(data)
+  })
+})

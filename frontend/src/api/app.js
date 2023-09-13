@@ -96,3 +96,31 @@ export const updateProduct = async (proId, data) => {
         return null;
     }
 }
+
+export const deleteCartItemsByID = async (itemId) => {
+    try {
+        const res = await axios.delete("http://localhost:4000/deleteOrder/" + itemId);
+        return res
+    } catch (error) {
+        return null;
+    }
+}
+
+export const saveNewCartItem = async (data) => {
+    try {
+        const res = axios.post(`${baseUrl}addToCart`, {...data});
+        return (await res).data;
+    } catch (error) {
+        return null;
+    }
+}
+
+
+export const getProductByCate = async (cateId) => {
+    try {
+        const res = await axios.get(`${baseUrl}getProductByCate/${cateId}`)
+        return res.data;
+    } catch (error) {
+        return null;
+    }
+}
