@@ -328,6 +328,11 @@ begin
     declare itemId int;
     declare itemQuantity int;
     declare pid int;
+    declare `_rollback` bool default 0;
+declare continue handler for sqlexception set `_rollback` = 1;
+
+start transaction;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
     repeat
 		set itemId = (select id from cart_items where customer_id = customerId 
 					group by id order by id limit item_count, 1);                    
@@ -339,6 +344,12 @@ begin
             end if;
             until item_count = (select count(*) from cart_items where customer_id = customerId)
             end repeat;
+            
+			if `_rollback` then
+				rollback;
+			else 
+				commit;
+			end if;
 end $$
 delimiter ;
 
@@ -447,4 +458,3 @@ begin
 end &&
 delimiter ;  
 
-select * from user;
