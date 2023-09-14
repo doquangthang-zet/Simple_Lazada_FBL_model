@@ -1,7 +1,7 @@
 -- create database lazada;
 use lazada;
 
-drop table if exists warehouse, product_inventory, product, user;
+drop table if exists user;
 
 CREATE TABLE `lazada`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -11,7 +11,7 @@ CREATE TABLE `lazada`.`user` (
   `password` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`));
 
-drop table if exists warehouse, product_inventory, product;
+drop table if exists delivery_items, warehouse, product_inventory, product, cart_items, outbound_order;
 create table warehouse (
 wId int auto_increment unique,
 wName varchar(50) unique,
@@ -31,7 +31,9 @@ height double,
 category varchar(45),
 properties json,
 sellerId INT,
-createdAt DATETIME);
+createdAt DATETIME,
+primary key (id),
+foreign key (sellerId) references user(id));
 
 create table product_inventory (
 id int auto_increment unique,
@@ -41,10 +43,7 @@ quantity int not null,
 total_volume double,
 primary key (id),
 foreign key (warehouse_id) references warehouse(wId),
-foreign key (product_id) references product(id) );
-
-drop table if exists cart_items, outbound_order;
-
+foreign key (product_id) references product(id));
 
 create table cart_items (
 id int unique auto_increment,
@@ -52,7 +51,9 @@ productId int,
 quantity int,
 customer_id int,
 warehouse_no json,
-primary key (id));
+primary key (id),
+foreign key (productId) references product(id),
+foreign key (customer_id) references user(id));
 
 create table outbound_order (
 id int unique auto_increment,
@@ -62,8 +63,20 @@ f_name varchar(255),
 l_name varchar(255),
 email varchar(255),
 address varchar(255),
-delivery_status bool,
-primary key (id));
+delivery_status varchar(45),
+primary key (id),
+foreign key (customer_id) references user(id));
+
+create table delivery_items (
+id int unique auto_increment,
+productId int,
+quantity int,
+order_id int,
+warehouse_id int,
+primary key (id),
+foreign key (warehouse_id) references warehouse(wId),
+foreign key (productId) references product(id),
+foreign key (order_id) references outbound_order(id));
 
 insert into warehouse(wName, address, volume) values 
 ("WC", "28 naufd stress, basdf ward, ha tinh province", 100000),
@@ -92,6 +105,10 @@ create view product_volume as
 	select id, length * height * width as volume from product;
 
 
+select length * height * width as volume from product where id = 1;
+select volume from product_volume where id = 1;
+
+update product set length = 2 where id = 1;
 drop procedure if exists deleteWarehouse;
 delimiter &&
 create procedure deleteWarehouse(in id int)
@@ -299,21 +316,12 @@ create function check_inventory_quantity(pid int, pquantity int)
 returns bool reads sql data
 begin
 	declare in_check bool;
-	declare `_rollback` bool default 0;
-	declare continue handler for sqlexception set `_rollback` = 1;
 
-	start transaction;
-	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
     if ((select sum(quantity) from product_inventory where product_id = pid) >= pquantity) then
 		set in_check = 1;
         else set in_check = 0;
         end if;
 	return in_check;
-			if `_rollback` then
-				rollback;
-			else 
-				commit;
-			end if;
 end $$
 delimiter ;
 
@@ -337,7 +345,7 @@ begin
     declare itemQuantity int;
     declare pid int;
     declare `_rollback` bool default 0;
-declare continue handler for sqlexception set `_rollback` = 1;
+	declare continue handler for sqlexception set `_rollback` = 1;
 
 start transaction;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -348,24 +356,26 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
         set pid = (select productId from cart_items where id= itemId);
 		if (not check_inventory_quantity(itemId, itemQuantity)) then 
 			delete from cart_items where id = itemId;
-            else set item_count = item_count + 1;
-            end if;
-            until item_count = (select count(*) from cart_items where customer_id = customerId)
-            end repeat;
+		else set item_count = item_count + 1;
+		end if;
+	until item_count = (select count(*) from cart_items where customer_id = customerId)
+	end repeat;
             
-			if `_rollback` then
-				rollback;
-			else 
-				commit;
-			end if;
+	if `_rollback` then
+		rollback;
+	else 
+		commit;
+	end if;
 end $$
 delimiter ;
 
-drop procedure checkout;
+drop procedure if exists checkout;
+drop function if exists check_inventory_quantity;
 select * from product_inventory;
 select * from cart_items;
-call checkout(5);
+call checkout();
 
+update product_inventory set quantity = 2 where id = 1;
 
 -- ORDER AND PLACED ORDER TRANSACTION
 delimiter $$
@@ -465,4 +475,151 @@ begin
     select id, title from product where sellerId = sid;
 end &&
 delimiter ;  
+
+
+-- Place order procedure
+delimiter $$
+create procedure placeOrder(total double, customer_id int, f_name varchar(255), l_name varchar(255), email varchar(255), address varchar(255), delivery_status varchar(45)) 
+begin
+	declare item_count int default 0;
+    declare orderId int;
+    declare itemId int;
+    declare itemQuantity int;
+    declare pid int;
+    declare maxWhItemId int;
+    declare maxWhId int;
+    declare maxWhItemQuantity int;
+    
+    declare remainItem int;
+--     declare `_rollback` bool default 0;
+-- 	declare continue handler for sqlexception set `_rollback` = 1;
+
+-- start transaction;
+-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+	INSERT INTO outbound_order (`total`, `customer_id`, `f_name`, `l_name`, `email`, `address`, `delivery_status`) VALUES
+	(total, customer_id, f_name, l_name, email, address, delivery_status);
+    
+    set orderId = (select id from outbound_order where outbound_order.customer_id = customer_id order by id desc limit 0,1);
+    
+    repeat
+		set itemId = (select id from cart_items where cart_items.customer_id = customer_id limit item_count, 1);                    
+		set itemQuantity = (select quantity from cart_items where cart_items.customer_id = customer_id and id = itemId);
+        set remainItem = itemQuantity;
+        set pid = (select productId from cart_items where id = itemId);
+		
+        repeat
+			set maxWhItemId = (select id from product_inventory where product_id = pid order by quantity desc limit 0,1);
+			set maxWhId = (select warehouse_id from product_inventory where product_id = pid order by quantity desc limit 0,1);
+			set maxWhItemQuantity = (select quantity from product_inventory where product_id = pid order by quantity desc limit 0,1);
+			
+			if maxWhItemQuantity >= remainItem then
+				INSERT INTO delivery_items (`productId`,`quantity`,`order_id`,`warehouse_id`) values (pid, remainItem, orderId, maxWhId);
+				update product_inventory set quantity = maxWhItemQuantity - remainItem where id = maxWhItemId;
+                set remainItem = 0;
+			else 
+				set remainItem = itemQuantity - maxWhItemQuantity;
+                INSERT INTO delivery_items (`productId`,`quantity`,`order_id`,`warehouse_id`) values (pid, maxWhItemQuantity, orderId, maxWhId);
+				update product_inventory set quantity = 0 where id = maxWhItemId;
+			end if;
+        until remainItem = 0
+        end repeat;
+        
+        set item_count = item_count + 1;
+	until item_count = (select count(*) from cart_items where cart_items.customer_id = customer_id)
+	end repeat;
+    
+    
+            
+-- 	if `_rollback` then
+-- 		rollback;
+-- 	else 
+-- 		commit;
+-- 	end if;
+end $$
+delimiter ;
+
+-- Accept delivery procedure
+delimiter $$
+create procedure acceptDelivery(orderId int)
+begin
+	declare count int default 0;
+	declare warehouseId int;
+    declare itemId int;
+    declare itemQuantity int;
+    declare itemVolume int;
+
+	repeat 
+		set warehouseId = (select warehouse_id from delivery_items where order_id = orderId limit count, 1);
+		set itemQuantity = (select quantity from delivery_items where order_id = orderId limit count, 1);
+		set itemId = (select productId from delivery_items where order_id = orderId limit count, 1);
+		set itemVolume = (select length * width * height from product where id = itemId);
+		set itemQuantity = (select quantity from delivery_items where order_id = orderId limit count, 1);
+		
+		update warehouse set volume = volume + (itemVolume * itemQuantity) where wId = warehouseId;
+		
+		set count = count + 1;
+    until count = (select count(*) from delivery_items where order_id = orderId)
+    end repeat;
+end $$
+delimiter ;
+
+-- Reject procedure
+delimiter $$
+create procedure rejectDelivery(orderId int)
+begin
+	declare count int default 0;
+	declare warehouseId int;
+    declare itemId int;
+    declare itemQuantity int;
+    declare itemVolume int;
+
+	repeat 
+		set warehouseId = (select warehouse_id from delivery_items where order_id = orderId limit count, 1);
+		set itemQuantity = (select quantity from delivery_items where order_id = orderId limit count, 1);
+		set itemId = (select productId from delivery_items where order_id = orderId limit count, 1);
+		set itemVolume = (select length * width * height from product where id = itemId);
+		set itemQuantity = (select quantity from delivery_items where order_id = orderId limit count, 1);
+		
+		update product_inventory set quantity = quantity + itemQuantity where warehouse_id = warehouseId and product_id = itemId;
+		
+		set count = count + 1;
+    until count = (select count(*) from delivery_items where order_id = orderId)
+    end repeat;
+end $$
+delimiter ;
+
+-- trigger delivery
+delimiter $$
+create trigger delivery after update on outbound_order for each row
+begin
+
+	if new.delivery_status = "accept" then
+		call acceptDelivery(new.id);
+	elseif new.delivery_status = "reject" then
+		call rejectDelivery(new.id);
+    end if;
+
+    delete from cart_items where cart_items.customer_id = new.customer_id;
+    delete from delivery_items where order_id = new.id;
+    -- delete from outbound_order where id = new.id;
+end $$
+delimiter ;
+
+drop procedure if exists placeOrder;
+
+drop procedure if exists acceptDelivery;
+drop procedure if exists rejectDelivery;
+
+drop trigger if exists delivery;
+
+update product_inventory set quantity = 5 where product_id = 2;
+
+delete from outbound_order where id = 2;
+select count(*) from delivery_items where order_id = 2;
+select * from product_inventory where product_id = 1 order by quantity desc limit 0,1;
+
+update outbound_order set delivery_status = "accept" where id = 2;
+
+call placeOrder(2500, 7, "thang", "Do", "thang@gamil.com", "123Nguyen Van KINH", "");
+
 
