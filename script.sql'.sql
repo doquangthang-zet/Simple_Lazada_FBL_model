@@ -84,12 +84,14 @@ insert into warehouse(wName, address, volume) values
 
 insert into product values 
 (1, "Samsung", "Galaxy Y", "logo192.png", 1000, 1, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
-(2, "Iphone", "14Pro", "logo192.png", 1500, 0.2, 0.2, 0.2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35");
+(2, "Iphone", "14Pro", "logo192.png", 1500, 0.2, 0.2, 0.2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35"),
+(3, "Oppo", "neo 5", "logo192.png", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39");
 
 insert into product_inventory(product_id, warehouse_id, quantity, total_volume) values 
-(1, 2, 200, 900),
-(2, 2, 100, 0.02),
-(1, 1, 100, 450);
+(1, 2, 200, 200),
+(2, 2, 100, 0.8),
+(3, 2, 100, 600),
+(1, 1, 100, 100);
 
 insert into cart_items (`productId`, `quantity`, `customer_id`) values
 (1, 3, 7);
@@ -226,6 +228,7 @@ create view available_space as
     group by wid
     order by available desc;
     
+    select * from available_space;
 
 drop procedure if exists insert_inbound;
 delimiter &&
@@ -555,7 +558,7 @@ begin
 		set itemVolume = (select length * width * height from product where id = itemId);
 		set itemQuantity = (select quantity from delivery_items where order_id = orderId limit count, 1);
 		
-		update warehouse set volume = volume + (itemVolume * itemQuantity) where wId = warehouseId;
+		update product_inventory set total_volume = product_inventory.quantity * itemVolume where warehouse_id = warehouseId and product_id = itemId;
 		
 		set count = count + 1;
     until count = (select count(*) from delivery_items where order_id = orderId)
@@ -614,12 +617,12 @@ drop trigger if exists delivery;
 
 update product_inventory set quantity = 5 where product_id = 2;
 
-delete from outbound_order where id = 2;
+delete from outbound_order where id = 3;
 select count(*) from delivery_items where order_id = 2;
 select * from product_inventory where product_id = 1 order by quantity desc limit 0,1;
 
-update outbound_order set delivery_status = "accept" where id = 2;
+update outbound_order set delivery_status = "accept" where id = 1;
 
 call placeOrder(2500, 7, "thang", "Do", "thang@gamil.com", "123Nguyen Van KINH", "");
 
-
+use lazada;
