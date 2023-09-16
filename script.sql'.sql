@@ -322,9 +322,14 @@ create procedure deduct_inventory(pid int, pquantity int)
 begin
 	declare inventory_id int;
     declare warehouseID int;
-	select id into inventory_id from product_inventory where product_id = pid group by product_id limit 0, 1;
-    update product_inventory
+    declare count int default 0;
+	
 
+repeat
+	select id into inventory_id from product_inventory where product_id = pid group by product_id limit 0, 1;
+    
+
+end repeat;
 
 end $$
 delimiter ;
@@ -361,10 +366,9 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 end $$
 delimiter ;
 
-drop procedure checkout;
-select * from product_inventory;
+
+select * from outbound_order;
 select * from cart_items;
-call checkout(5);
 
 
 -- ORDER AND PLACED ORDER TRANSACTION
