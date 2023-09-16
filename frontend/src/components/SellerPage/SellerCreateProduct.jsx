@@ -1,15 +1,14 @@
 import axios from "axios";
 import { React, useEffect, useState } from "react"
 import { getAllCates, getOneCate, saveNewProduct } from "../../api/app";
-import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from "react-router-dom";
 
 export default function SellerCreateProduct() {
-    const [msg, setMsg] = useState('')
-    const [id, setId] = useState()
+    const [userId, setUserId] = useState(
+        JSON.parse(sessionStorage.getItem("user")).id
+      );
     const [categories, setCategories] = useState([])
     const [productProperties, setProductProperties] = useState({})
-    const [products, setProducts] = useState([])
     const [product, setProduct] = useState({
         title: '',
         description: '',
@@ -19,64 +18,45 @@ export default function SellerCreateProduct() {
         width: 0,
         height: 0,
         category: '',
-      })
-    
-
+    })
     const navigate = useNavigate()
 
     useEffect(() => {
-        getUser()
         fetchCategories()
-        
     }, []);
 
+    // Get all categories
     function fetchCategories() {
         getAllCates().then(res => {
           setCategories(res.cate)
         })
     }
 
-    function getUser() {
-        axios.get("http://localhost:4000")
-        .then(res => {
-            if(res.data.Status === "Success") {
-                setId(res.data.id)
-                setProduct( { ...product, ["sellerId"]: res.data.id });
-            } else {
-                setMsg(res.data.Error)
-                navigate("/login")
-            }
-        })
-        .then(err => console.log(err))
-    }
-
-    function fetchProduct() {
-        fetch(`http://localhost:4000/product`)
-          .then((res) => res.json())
-          .then((data) => {
-            setProducts(data);
-          });
-    }
-
+    // Handle product infor change
     const handleChange = ({ currentTarget: input }) => {
         setProduct( { ...product, [input.name]: input.value });
-      };
+    };
 
+    // Data config
     const config = {
         headers: {
             "Content-Type": "multipart/form-data"
         }
     }
-      const saveProduct = async (e) => {
+
+    // Create new product
+    const saveProduct = async (e) => {
         e.preventDefault();
         try {
             await axios.post("http://localhost:4000/createProduct", product, config)
-            navigate(`/seller/${id}/products`);
+            alert("Product created successfully!")
+            navigate(`/seller/${userId}/products`);
           } catch (err) {
             console.log(err)
           }
     }
 
+    // Get all properties of parent category and ancestors
     const propertiesToFill = []
     if (categories.length > 0 && product.category) {
         let selCate = categories.find(({_id}) => _id === product.category)
@@ -89,6 +69,7 @@ export default function SellerCreateProduct() {
         }
     }
     
+    // Save all property values to product infor
     function setProductProps(propName, value) {
         setProductProperties(prev => {
             const newProductProps = {...prev};

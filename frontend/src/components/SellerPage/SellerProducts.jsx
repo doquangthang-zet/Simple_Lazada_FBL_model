@@ -8,38 +8,24 @@ function SellerProducts ({swal}, sellerId) {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
     const params = useParams();
     const [products, setProducts] = useState([])
-
     const [categories, setCategories] = useState([])
-
-    const [msg, setMsg] = useState('')
     const [id, setId] = useState(params.sellerId)
 
     useEffect(() => {
-        getUser()
         getAllProducts(id).then(res => {
             setProducts(res.data)
         })
         fetchCategories()
     }, []);
 
-    function getUser() {
-        axios.get("http://localhost:4000")
-        .then(res => {
-            if(res.data.Status === "Success") {
-                setId(res.data.id)
-            } else {
-                setMsg(res.data.Error)
-            }
-        })
-        .then(err => console.log(err))
-    }
-
+    //Get all catefories
     function fetchCategories() {
         getAllCates().then(res => {
           setCategories(res.cate)
         })
     }
 
+    // delete one product
     const handleDelete = (pro) => {
         swal.fire({
             title: 'Are you sure?',
@@ -49,13 +35,13 @@ function SellerProducts ({swal}, sellerId) {
             confirmButtonText: "Yes, Delete!",
             reverseButtons: true,
             confirmButtonColor: '#d55',
-          }).then(result => {
+        }).then(result => {
             if (result.isConfirmed) {
                 deleteProductById(pro.id)
                 window.location.reload();
             }
-          });
-      }
+        });
+    }
 
     return (
         <div className="products">

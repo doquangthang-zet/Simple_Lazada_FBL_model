@@ -15,30 +15,30 @@ export default function  WarehouseEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-    useEffect(() => {
-      fetch(`http://localhost:4000/getWarehouse/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-        const newData = {}; 
-        Object.assign(newData, data[0]);
-          setWarehouse(newData)
-        });
-    }, []);
+  useEffect(() => {
+    fetch(`http://localhost:4000/getWarehouse/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+      const newData = {}; 
+      Object.assign(newData, data[0]);
+        setWarehouse(newData)
+      });
+  }, []);
 
   const handleChange = ({ currentTarget: input }) => {
     setWarehouse({ ...warehouse, [input.name]: input.value });
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const sentId  = warehouse.wId
-      try {
-        await axios.put(`http://localhost:4000/editWarehouse/${sentId}`, warehouse)
-        .then( (res) => 
-        window.alert(res.data) );
-        navigate("/admin/warehouse");
-      } catch (err) {}
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const sentId  = warehouse.wId
+    try {
+      await axios.put(`http://localhost:4000/editWarehouse/${sentId}`, warehouse)
+      .then( (res) => 
+      window.alert(res.data) );
+      navigate("/admin/warehouse");
+    } catch (err) {}
+  };
 
   return (
     <div className="products">

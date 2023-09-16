@@ -1,11 +1,7 @@
 import Header from "../Layout/Header";
 import React, { useEffect, useState } from "react";
-import { deleteCartItemsByID, deleteOrderByID } from "../../api/app";
 import axios from "axios";
-// import Header from './Layout/Header'
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { BsPlusSquare } from "react-icons/bs";
-import { PiMinusSquare } from "react-icons/pi";
 
 function Checkout() {
   var imageBasePath =
@@ -14,13 +10,9 @@ function Checkout() {
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState([]);
 
-  const [auth, setAuth] = useState(false);
-  const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
     JSON.parse(sessionStorage.getItem("user")).id
   );
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("");
   const [outboundOrder, setOutboundOrder] = useState([]);
   let total = 0;
   const [order, setOrder] = useState({
@@ -33,17 +25,6 @@ function Checkout() {
     delivery_status: "",
   });
 
-  const handleLogout = () => {
-    axios
-      .get("http://localhost:4000/logout")
-      .then((res) => {
-        sessionStorage.removeItem("user");
-        window.location.reload(true);
-      })
-      .catch((err) => console.log(err));
-  };
-  // axios.defaults.withCredentials = true;
-
   useEffect(() => {
     fetchUser();
     fetchProduct();
@@ -51,24 +32,21 @@ function Checkout() {
     fecthcurrentOrder();
   }, []);
 
+  //Check user login status
   function fetchUser() {
     axios
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
           sessionStorage.setItem("user", JSON.stringify(res.data));
-          setAuth(true);
-          // setUserId(res.data.id)
-          setName(res.data.name);
-          setRole(res.data.role);
         } else {
-          setAuth(false);
-          setMsg(res.data.Error);
           navigate("/login")
         }
       })
       .then((err) => console.log(err));
   }
+
+  //Get all product
   function fetchProduct() {
     fetch(`http://localhost:4000/product`)
       .then((res) => res.json())
@@ -77,6 +55,7 @@ function Checkout() {
       });
   }
 
+  // Get all cart Items
   function fecthCartItems() {
     axios
       .get("http://localhost:4000/cart", { params: { id: userId } })
@@ -85,6 +64,7 @@ function Checkout() {
       });
   }
 
+  // Get current Order
   function fecthcurrentOrder() {
     axios.get("http://localhost:4000/getOneOrder/" + userId).then((res) => {
       if (res.data.length > 0) {
@@ -102,25 +82,28 @@ function Checkout() {
     });
   }
 
+  // Handle order infor changes
   const handleChange = ({ currentTarget: input }) => {
     setOrder({ ...order, [input.name]: input.value });
   };
 
+  // Place an order
   const placeOrder = async (e) => {
     e.preventDefault();
-
     try {
       if (outboundOrder.length <= 0) {
         await axios.post("http://localhost:4000/placeOrder", order);
+        alert("Your order is delivering!")
         navigate("/placedOrder/"+userId);
       } else {
-        alert("Cannot change the placed order information!")
+        alert("Cannot change the placed order information! Please accept your privious order!")
         navigate("/placedOrder/"+userId);
       }
     } catch (err) {
-    } // fetchProduct()
+    }
   };
 
+  // Calculate total price
   for (const proId of cartItems) {
     const price =
       products.find((p) => p.id === proId.productId)?.price * proId.quantity ||

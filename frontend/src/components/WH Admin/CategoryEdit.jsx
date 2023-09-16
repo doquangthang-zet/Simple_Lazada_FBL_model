@@ -23,12 +23,14 @@ export default function CategoryEdit() {
     })
   }, [])
 
+  // Get all categories
   function fetchCategories() {
     getAllCates().then(res => {
       setCategories(res.cate)
     })
   }
 
+  // Update categories
   function updateCate() {
     const data = {
       name: cateName,
@@ -40,12 +42,14 @@ export default function CategoryEdit() {
     navigate("/admin/category")
   }
 
+  // Add new property
   function addProperty() {
     setProperties(prev => {
       return [...prev, {name:'', type:'', required: false}]
     })
   }
 
+  // Handle name of property
   function handlePropertyNameChange(index, prop, newName) {
     setProperties(prev => {
       const properties = [...prev];
@@ -54,6 +58,7 @@ export default function CategoryEdit() {
     })
   }
 
+  // Handle type of property
   function handlePropertyTypeChange(index, prop, newType) {
     setProperties(prev => {
       const properties = [...prev];
@@ -62,6 +67,7 @@ export default function CategoryEdit() {
     })
   }
 
+  // Handle require of property
   function handlePropertyRequireChange(index, prop, newRequire) {
     setProperties(prev => {
       const properties = [...prev];
@@ -70,13 +76,14 @@ export default function CategoryEdit() {
     })
   }
 
-   function removeProp(indexToRemove) {
+  // Remove property
+  function removeProp(indexToRemove) {
     setProperties(prev => {
       return [...prev].filter((p, pi) => {
         return pi !== indexToRemove;
       });
     })
-   }
+  }
 
   return (
     <div className="products">

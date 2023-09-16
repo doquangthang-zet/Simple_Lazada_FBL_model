@@ -18,8 +18,7 @@ const mongodb_URL = "mongodb+srv://lazada:lazada@cluster0.t3zabpy.mongodb.net/?r
 
 app.use(express.static('public'))
 app.use(express.json());
-// app.use(cors());
-// app.use(bodyParser.urlencoded({extended:false}))
+
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -97,6 +96,7 @@ app.listen(port, () => {
   console.log(`Listen to the port ${port}`);
 });
 
+//Middleware to verify user based on token in cookies
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
@@ -120,6 +120,7 @@ app.get("/", verifyUser, (req, res) => {
   return res.json({ Status: "Success", id: req.id, name: req.name, role: req.role });
 });
 
+//API to register new user
 app.post("/register", (req, res) => {
   var mailformat = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   const getUserSql = "SELECT * FROM user WHERE email = ?";
@@ -149,6 +150,7 @@ app.post("/register", (req, res) => {
   });
 });
 
+// API to login to system
 app.post("/login", (req, res) => {
   const sql = "SELECT * FROM user WHERE email = ?";
 
@@ -183,12 +185,13 @@ app.post("/login", (req, res) => {
   });
 });
 
+// Log out
 app.get("/logout", (req, res) => {
     res.clearCookie('token')
     return res.json({Status: "Success"})
 })
 
-//Cate route
+//Categories route
 const cateRoute = require("./routes/categories"); 
 app.use("/api/category/", cateRoute);
 
@@ -305,7 +308,6 @@ app.get("/getSellerProduct/:sellerId", (req, res) => {
   });
 });
 
-
 // create inbound order
 app.post("/createInbound", (req, res) => {
   const q = "CALL inboundOrder(?, ?)"
@@ -327,6 +329,7 @@ app.get("/product/:sellerId", (req, res) => {
   });
 });
 
+// get products using category
 app.get("/getProductByCate/:id", (req, res) => {
   const cateId = req.params.id;
   const q = "SELECT * FROM product WHERE category = ?";
@@ -553,6 +556,7 @@ app.get("/getOneOrder/:id", (req, res) => {
   });
 });
 
+// Filter product based on search, filter, etc.
 app.get("/filteredData", (req, res) => {
   const search = `%${req.query.search}%`;
   const filter = req.query.filter;
@@ -590,6 +594,7 @@ app.get("/filteredData", (req, res) => {
   })
 })
 
+// Check valid product quantity and make changes
 app.put("/checkQuantity/:id", (req, res) => {
   const q = "CALL checkout(?)";
   const userId = req.params.id;
@@ -609,6 +614,7 @@ app.post("/placeOrder", (req, res) => {
   });
 }); 
 
+// Accept delivery order
 app.put("/acceptOrder/:id", (req, res) => {
   const q = "update outbound_order set `delivery_status` = 'accept' where customer_id = ?";
   const userId = req.params.id;
@@ -619,6 +625,7 @@ app.put("/acceptOrder/:id", (req, res) => {
   })
 })
 
+// Reject delivery order
 app.put("/rejectOrder/:id", (req, res) => {
   const q = "update outbound_order set `delivery_status` = 'reject' where customer_id = ?";
   const userId = req.params.id;
@@ -627,8 +634,8 @@ app.put("/rejectOrder/:id", (req, res) => {
     return res.json(data)
   })
 })
-
-//delete order from cart
+ 
+//delete order
 app.delete("/deleteOrder/:id", (req, res) => {
   const userId = req.params.id;
   const q = "DELETE FROM outbound_order WHERE customer_id = ?";

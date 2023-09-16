@@ -14,6 +14,8 @@ export default function Seller() {
     useEffect(() => {
         getUser()
     }, [])
+
+    // Chekc user log in
     function getUser() {
         axios.get("http://localhost:4000")
         .then(res => {

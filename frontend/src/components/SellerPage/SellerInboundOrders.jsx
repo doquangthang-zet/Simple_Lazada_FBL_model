@@ -11,7 +11,6 @@ export default function SellerInboundOrders() {
     quantity: null,
   });
 
-
   useEffect(() => {
     fetch(`http://localhost:4000/getSellerProduct/${sellerId}`)
       .then((res) => res.json())
@@ -20,29 +19,29 @@ export default function SellerInboundOrders() {
       });
   }, []);
 
+  // Handle inbound order data
   const handleChange = ({ currentTarget: input }) => {
     setInbound({ ...inbound, [input.name]: input.value });
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await axios
-          .post(`http://localhost:4000/createInbound`, inbound)
-          .then((res) => {
-            if (res.data[0].message) {
-              window.alert(res.data[0].message);
-            }
-          });
-
-        navigate(`/seller/${sellerId}/products`);
-      } catch (err) {
-        window.alert(err);
-      }
-    };
+  // Send request to create inbound order
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios
+        .post(`http://localhost:4000/createInbound`, inbound)
+        .then((res) => {
+          if (res.data[0].message) {
+            window.alert(res.data[0].message);
+          }
+        });
+      navigate(`/seller/${sellerId}/products`);
+    } catch (err) {
+      window.alert(err);
+    }
+  };
 
   return (
-    // <div>params: {sellerId}</div>
     <div className="products">
       <div class="container">
         <div class="row">
