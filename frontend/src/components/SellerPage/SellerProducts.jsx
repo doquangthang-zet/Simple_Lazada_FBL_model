@@ -15,7 +15,6 @@ function SellerProducts ({swal}, sellerId) {
     const [id, setId] = useState(params.sellerId)
 
     useEffect(() => {
-        // console.log(params.id)
         getUser()
         getAllProducts(id).then(res => {
             setProducts(res.data)
@@ -55,7 +54,6 @@ function SellerProducts ({swal}, sellerId) {
                 deleteProductById(pro.id)
                 window.location.reload();
             }
-              console.log({result})
           });
       }
 

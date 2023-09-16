@@ -29,7 +29,6 @@ export default function SellerEditProduct() {
         // getUser()
         fetchCategories()
         getOneProduct(productId).then(res => {
-            console.log(res[0].title)
             setProduct({
                 title: res[0].title,
                 description: res[0].description,
@@ -41,14 +40,6 @@ export default function SellerEditProduct() {
                 category: res[0].category,
                 properties: JSON.parse(res[0].properties),
               });
-            // setProduct( { ...product, ["description"]: res[0].description });
-            // setProduct( { ...product, ["image"]: res[0].image });
-            // setProduct( { ...product, ["price"]: res[0].price });
-            // setProduct( { ...product, ["length"]: res[0].length });
-            // setProduct( { ...product, ["width"]: res[0].width });
-            // setProduct( { ...product, ["height"]: res[0].height });
-            // setProduct( { ...product, ["category"]: res[0].category });
-            console.log(product)
         })
     }, []);
 
@@ -57,19 +48,6 @@ export default function SellerEditProduct() {
           setCategories(res.cate)
         })
     }
-
-    // function getUser() {
-    //     axios.get("http://localhost:4000")
-    //     .then(res => {
-    //         if(res.data.Status === "Success") {
-    //             setId(res.data.id)
-    //             setProduct( { ...product, ["sellerId"]: res.data.id });
-    //         } else {
-    //             setMsg(res.data.Error)
-    //         }
-    //     })
-    //     .then(err => console.log(err))
-    // }
 
     function fetchProduct() {
         fetch(`http://localhost:4000/product`)
@@ -90,16 +68,8 @@ export default function SellerEditProduct() {
     }
       const saveProduct = async (e) => {
         e.preventDefault();
-        console.log(product)
-        console.log(productProperties)
         updateProduct(productId, product)
         navigate(`/seller/${id}/products`);
-        // try {
-        //     await axios.post("http://localhost:4000/createProduct", product, config)
-        //     navigate("/seller/products");
-        //   } catch (err) {
-        //     console.log(err)
-        //   }  // fetchProduct()
     }
 
     const propertiesToFill = []
@@ -197,7 +167,7 @@ export default function SellerEditProduct() {
                         <label for="height" class="form-label">Product height</label>
                         <input type="number" class="form-control" id="height" placeholder="Enter height" name='height' value={product.height} onChange={handleChange} />
                     </div>
-                    <button type="button" class="actionBtn" onClick={saveProduct}>Check</button>
+                    {/* <button type="button" class="actionBtn" onClick={saveProduct}>Check</button> */}
                     <button type="submit" class="actionBtn">Submit</button>
                 </form>
             </div>

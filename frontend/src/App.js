@@ -1,7 +1,6 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Seller from './components/SellerPage/Seller';
-import Customer from './components/CustomerPage/Customer';
 import Register from './components/AuthPage/Register';
 import Login from './components/AuthPage/Login';
 import SellerRegister from './components/AuthPage/SellerRegister';
@@ -22,7 +21,7 @@ function App() {
         <Route path="/" element={<CustomerPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/placedOrder" element={<PlaceOrder />} />
+        <Route path="/placedOrder/:id" element={<PlaceOrder />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/sellerRegister' element={<SellerRegister />} />

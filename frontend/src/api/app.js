@@ -99,7 +99,7 @@ export const updateProduct = async (proId, data) => {
 
 export const deleteCartItemsByID = async (itemId) => {
     try {
-        const res = await axios.delete("http://localhost:4000/deleteOrder/" + itemId);
+        const res = await axios.delete("http://localhost:4000/deleteCartItems/" + itemId);
         return res
     } catch (error) {
         return null;
@@ -133,10 +133,19 @@ export const updateCartItem = async (itemId, data) => {
     }
 }
 
-export const getProductByCate = async (cateId) => {
+export const checkQuantity = async (userId) => {
     try {
-        const res = await axios.get(`${baseUrl}getProductByCate/${cateId}`)
-        return res.data;
+        const res = axios.put(`${baseUrl}checkQuantity/${userId}`);
+        return (await res).data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const deleteOrderByID = async (userId) => {
+    try {
+        const res = await axios.delete("http://localhost:4000/deleteOrder/" + userId);
+        return res
     } catch (error) {
         return null;
     }

@@ -13,7 +13,6 @@ export default function SideBar() {
         axios.get("http://localhost:4000")
         .then(res => {
             if(res.data.Status === "Success") {
-                console.log(res.data)
                 setId(res.data.id)
             } else {
                 setMsg(res.data.Error)

@@ -17,27 +17,27 @@ function Checkout() {
   const [auth, setAuth] = useState(false);
   const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("user")).id
+    JSON.parse(sessionStorage.getItem("user")).id
   );
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [outboundOrder, setOutboundOrder] = useState([]);
   let total = 0;
   const [order, setOrder] = useState({
-    total: JSON.parse(localStorage.getItem("cart"))[1],
+    total: JSON.parse(sessionStorage.getItem("cart"))[1],
     customer_id: userId,
     f_name: "",
     l_name: "",
     email: "",
     address: "",
-    delivery_status: false,
+    delivery_status: "",
   });
 
   const handleLogout = () => {
     axios
       .get("http://localhost:4000/logout")
       .then((res) => {
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
         window.location.reload(true);
       })
       .catch((err) => console.log(err));
@@ -49,7 +49,6 @@ function Checkout() {
     fetchProduct();
     fecthCartItems();
     fecthcurrentOrder();
-    console.log(outboundOrder);
   }, []);
 
   function fetchUser() {
@@ -57,8 +56,7 @@ function Checkout() {
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
-          localStorage.setItem("user", JSON.stringify(res.data));
-          console.log(res.data);
+          sessionStorage.setItem("user", JSON.stringify(res.data));
           setAuth(true);
           // setUserId(res.data.id)
           setName(res.data.name);
@@ -66,6 +64,7 @@ function Checkout() {
         } else {
           setAuth(false);
           setMsg(res.data.Error);
+          navigate("/login")
         }
       })
       .then((err) => console.log(err));
@@ -75,7 +74,6 @@ function Checkout() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-        console.log(data);
       });
   }
 
@@ -89,17 +87,16 @@ function Checkout() {
 
   function fecthcurrentOrder() {
     axios.get("http://localhost:4000/getOneOrder/" + userId).then((res) => {
-      console.log(res.data);
       if (res.data.length > 0) {
         setOutboundOrder(res.data);
         setOrder({
-          total: JSON.parse(localStorage.getItem("cart"))[1],
+          total: JSON.parse(sessionStorage.getItem("cart"))[1],
           customer_id: userId,
           f_name: res.data[0].f_name,
           l_name: res.data[0].l_name,
           email: res.data[0].email,
           address: res.data[0].address,
-          delivery_status: false,
+          delivery_status: "",
         });
       }
     });
@@ -111,16 +108,16 @@ function Checkout() {
 
   const placeOrder = async (e) => {
     e.preventDefault();
+
     try {
-      if (outboundOrder.length > 0) {
-        await axios.put("http://localhost:4000/editOrder", order);
-        navigate("/placedOrder");
+      if (outboundOrder.length <= 0) {
+        await axios.post("http://localhost:4000/placeOrder", order);
+        navigate("/placedOrder/"+userId);
       } else {
-        await axios.post("http://localhost:4000/createOrder", order);
-        navigate("/placedOrder");
+        alert("Cannot change the placed order information!")
+        navigate("/placedOrder/"+userId);
       }
     } catch (err) {
-      console.log(err);
     } // fetchProduct()
   };
 
@@ -254,7 +251,7 @@ function Checkout() {
 
                 <hr class="mb-4" />
                 <button class="actionBtn" type="submit">
-                  Checkout
+                  Place Order
                 </button>
               </form>
             </div>
