@@ -8,7 +8,6 @@ export default function SellerPage() {
     const params = useParams();
 
     useEffect(() => {
-        console.log(params)
         fetch(`http://localhost:4000/product/${params.sellerId}`)
           .then((res) => res.json())
           .then((data) => {

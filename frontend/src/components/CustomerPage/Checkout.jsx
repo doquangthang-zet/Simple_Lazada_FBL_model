@@ -30,7 +30,7 @@ function Checkout() {
     l_name: "",
     email: "",
     address: "",
-    delivery_status: false,
+    delivery_status: "",
   });
 
   const handleLogout = () => {
@@ -49,7 +49,6 @@ function Checkout() {
     fetchProduct();
     fecthCartItems();
     fecthcurrentOrder();
-    console.log(outboundOrder);
   }, []);
 
   function fetchUser() {
@@ -58,7 +57,6 @@ function Checkout() {
       .then((res) => {
         if (res.data.Status === "Success") {
           sessionStorage.setItem("user", JSON.stringify(res.data));
-          console.log(res.data);
           setAuth(true);
           // setUserId(res.data.id)
           setName(res.data.name);
@@ -76,7 +74,6 @@ function Checkout() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-        console.log(data);
       });
   }
 
@@ -90,7 +87,6 @@ function Checkout() {
 
   function fecthcurrentOrder() {
     axios.get("http://localhost:4000/getOneOrder/" + userId).then((res) => {
-      console.log(res.data);
       if (res.data.length > 0) {
         setOutboundOrder(res.data);
         setOrder({
@@ -100,7 +96,7 @@ function Checkout() {
           l_name: res.data[0].l_name,
           email: res.data[0].email,
           address: res.data[0].address,
-          delivery_status: false,
+          delivery_status: "",
         });
       }
     });
@@ -112,16 +108,16 @@ function Checkout() {
 
   const placeOrder = async (e) => {
     e.preventDefault();
+
     try {
-      if (outboundOrder.length > 0) {
-        await axios.put("http://localhost:4000/editOrder", order);
-        navigate("/placedOrder");
+      if (outboundOrder.length <= 0) {
+        await axios.post("http://localhost:4000/placeOrder", order);
+        navigate("/placedOrder/"+userId);
       } else {
-        await axios.post("http://localhost:4000/createOrder", order);
-        navigate("/placedOrder");
+        alert("Cannot change the placed order information!")
+        navigate("/placedOrder/"+userId);
       }
     } catch (err) {
-      console.log(err);
     } // fetchProduct()
   };
 

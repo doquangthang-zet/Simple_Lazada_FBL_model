@@ -64,7 +64,7 @@ const customerConnection = mysql.createConnection({
 });
 
 
-adminConnection.connect((err) => {
+connection.connect((err) => {
   if(err) throw err;
   console.log("Mysql Connected!")
 })
@@ -198,7 +198,16 @@ app.use("/api/category/", cateRoute);
 // get warehouse list
 app.get("/warehouse", (req, res) => {
   const q = "SELECT * FROM warehouse";
-  connection.query(q, (err, data) => {
+  adminConnection.query(q, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+// get warehouse available space
+app.get("/warehouseAvailableSpace", (req, res) => {
+  const q = "select * from available_space";
+  adminConnection.query(q, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -208,7 +217,7 @@ app.get("/warehouse", (req, res) => {
 app.post("/createWarehouse", (req, res) => {
   const q = "CALL createWarehouse(?, ?, ?)";
   const values = [req.body.wName, req.body.address, req.body.volume];
-  connection.query(q, values, (err, data) => {
+  adminConnection.query(q, values, (err, data) => {
     if (err) return res.json(err);
     return res.json(data[0]);
   });
@@ -218,7 +227,7 @@ app.post("/createWarehouse", (req, res) => {
 app.delete("/deleteWarehouse/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q = "CALL deleteWarehouse(?);";
-  connection.query(q, warehouseId, (err, data) => {
+  adminConnection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data[0]);
   });
@@ -228,7 +237,7 @@ app.delete("/deleteWarehouse/:id", (req, res) => {
 app.get("/getWarehouse/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q = "SELECT * FROM warehouse WHERE wId = ?";
-  connection.query(q, warehouseId, (err, data) => {
+  adminConnection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -240,7 +249,7 @@ app.put("/editWarehouse/:id", (req, res) => {
   const q =
     "UPDATE warehouse SET `wName` = ?, `address` = ?, `volume` = ? WHERE wId = ?";
   const values = [req.body.wName, req.body.address, req.body.volume];
-  connection.query(q, [...values, warehouseId], (err, data) => {
+  adminConnection.query(q, [...values, warehouseId], (err, data) => {
     if (err) return res.json(err);
     return res.json("Warehouse updated successfully!");
   });
@@ -251,7 +260,7 @@ app.get("/viewWarehouseProduct/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q =
     "SELECT i.id, p.title, w.wName, i.product_id, i.quantity FROM warehouse w JOIN product_inventory i ON  w.wId = i.warehouse_id JOIN product p ON i.product_id = p.id WHERE wId = ? ";
-  connection.query(q, warehouseId, (err, data) => {
+    adminConnection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -262,7 +271,7 @@ app.get("/getWarehouseProduct/:id", (req, res) => {
   const warehouseId = req.params.id;
   const q =
     "SELECT i.id, title, product_id, warehouse_id, wName, i.quantity FROM warehouse w JOIN product_inventory i ON  w.wId = i.warehouse_id  JOIN product p ON i.product_id = p.id WHERE i.id = ?";
-  connection.query(q, warehouseId, (err, data) => {
+    adminConnection.query(q, warehouseId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -278,7 +287,7 @@ app.put("/moveProduct/:old_id", (req, res) => {
     parseInt(req.body.quantity),
   ];
   const q = "CALL moveProduct(?, ?, ?, ?, ?)";
-  connection.query(q, values, (err, data) => {
+  adminConnection.query(q, values, (err, data) => {
     if (err) return res.json(err);
     else return res.json(data[0]);
   });
@@ -288,7 +297,7 @@ app.put("/moveProduct/:old_id", (req, res) => {
 app.get("/getSellerProduct/:sellerId", (req, res) => {
   const id = req.params.sellerId;
   const q = "CALL getSellerProduct(?)";
-  connection.query(q, id, (err, data) => {
+  sellerConnection.query(q, id, (err, data) => {
     if (err) 
     return res.json(err);
     return res.json(data[0]);
@@ -312,7 +321,7 @@ app.post("/createInbound", (req, res) => {
 app.get("/product/:sellerId", (req, res) => {
   const sellerId = req.params.sellerId
   const q = "SELECT * FROM product where sellerId = ?";
-  connection.query(q, sellerId, (err, data) => {
+  sellerConnection.query(q, sellerId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -321,23 +330,14 @@ app.get("/product/:sellerId", (req, res) => {
 app.get("/getProductByCate/:id", (req, res) => {
   const cateId = req.params.id;
   const q = "SELECT * FROM product WHERE category = ?";
-  connection.query(q, cateId, (err, data) => {
+  sellerConnection.query(q, cateId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   })
 })
 
-// app.get("/cart", (req, res) => {
-//   const q="SELECT * FROM cart";
-//   connection.query(q,(err,data) => {
-//     if (err) return res.json(err);
-//     return res.json(data)
-//   })
-// })
-
 //create product
 app.post("/createProduct", upload.single("image"), (req, res) => {
-  // console.log(req.file.filename)
   const q = "INSERT INTO product (`title`, `description`, `image`, `price`, `length`, `width`, `height`, `category`, `properties`, `sellerId`, `createdAt`) VALUES (?)";
   const values = [
     req.body.title,
@@ -352,7 +352,7 @@ app.post("/createProduct", upload.single("image"), (req, res) => {
     req.body.sellerId,
     new Date(),
   ];
-  connection.query(q, [values], (err, data) => {
+  sellerConnection.query(q, [values], (err, data) => {
     if (err) return res.json(err);
     return res.json("Product created successfully!");
   });
@@ -361,7 +361,7 @@ app.post("/createProduct", upload.single("image"), (req, res) => {
 // get product list
 app.get("/product", (req, res) => {
   const q = "SELECT * FROM product"
-  connection.query(q, (err, data) => {
+  sellerConnection.query(q, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   })
@@ -374,13 +374,13 @@ app.delete("/deleteProduct/:id", (req, res) => {
   //Get the image name of deleted item
   const getImageQ = "SELECT * FROM product WHERE id = ?";
   var image = ''
-  connection.query(getImageQ, productId, (err, data) => {
+  sellerConnection.query(getImageQ, productId, (err, data) => {
     if (err) return res.json(err);
     image = data[0].image
   });
   //Delete the items
   const q = "DELETE FROM product WHERE id = ?";
-  connection.query(q, productId, (err, data) => {
+  sellerConnection.query(q, productId, (err, data) => {
     if (err) return res.json(err);
     //Delete the image of item
     fs.unlink(`./frontend/public/images/${image}`, function (err) {
@@ -396,7 +396,7 @@ app.delete("/deleteProduct/:id", (req, res) => {
 app.get("/getOneProduct/:id", (req, res) => {
   const productId = req.params.id;
   const q = "SELECT * FROM product WHERE id = ?";
-  connection.query(q, productId, (err, data) => {
+  sellerConnection.query(q, productId, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -409,7 +409,7 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
   //Get the image name of deleted item
   const getImageQ = "SELECT * FROM product WHERE id = ?";
   var image = ''
-  connection.query(getImageQ, productId, (err, data) => {
+  sellerConnection.query(getImageQ, productId, (err, data) => {
     if (err) return res.json(err);
     image = data[0].image
   });
@@ -427,7 +427,7 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
       req.body.category,
       JSON.stringify(req.body.properties),
     ];
-    connection.query(q, [...values, productId], (err, data) => {
+    sellerConnection.query(q, [...values, productId], (err, data) => {
       if (err) return res.json(err);
       fs.unlink(`./frontend/public/images/${image}`, function (err) {
         if (err) throw err;
@@ -443,7 +443,7 @@ app.put("/editProduct/:id", upload.single("image"), (req, res) => {
 app.get("/cart", (req, res) => {
   const userId = req.query.id
   const q="SELECT * FROM cart_items where customer_id = ?";
-  connection.query(q, userId, (err,data) => {
+  customerConnection.query(q, userId, (err,data) => {
     if (err) return res.json(err);
     return res.json(data)
   })
@@ -458,8 +458,8 @@ app.post('/addToCart', function(req, res){
     req.body.quantity,
     req.body.customerId,
   ];
-  console.log(values)
-  connection.query(q, [values], (err, data) => {
+
+  customerConnection.query(q, [values], (err, data) => {
     if (err) return res.json(err);
     return res.json("Added to cart!");
   });
@@ -469,9 +469,9 @@ app.post('/addToCart', function(req, res){
 app.get("/getOneCartItem", (req, res) => {
   const userId = req.query.userId;
   const proId = req.query.proId;
-  console.log(req.query)
+
   const q = "SELECT * FROM cart_items WHERE customer_id = ? and productId = ?";
-  connection.query(q, [userId, proId], (err, data) => {
+  customerConnection.query(q, [userId, proId], (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
   });
@@ -486,18 +486,18 @@ app.put('/editCartItem/:id', function(req, res){
     req.body.quantity,
     req.body.customerId,
   ];
-  // console.log(req)
-  connection.query(q, [...values, id], (err, data) => {
+
+  customerConnection.query(q, [...values, id], (err, data) => {
     if (err) return res.json(err);
     return res.json("Edit cart item!");
   }); 
 });
 
-//delete order from cart
-app.delete("/deleteOrder/:id", (req, res) => {
+//delete items from cart
+app.delete("/deleteCartItems/:id", (req, res) => {
   const productId = req.params.id;
   const q = "DELETE FROM cart_items WHERE id = ?";
-  connection.query(q, productId, (err) => {
+  customerConnection.query(q, productId, (err) => {
     if (err) return res.json(err);
     return res.json("Cart deleted!");
   })
@@ -516,7 +516,7 @@ app.post('/createOrder', function(req, res){
     req.body.address,
     req.body.delivery_status,
   ];
-  console.log(values)
+
   connection.query(q, [values], (err, data) => {
     if (err) return res.json(err);
     return res.json("Placed order!");
@@ -536,7 +536,7 @@ app.put('/editOrder', function(req, res){
     req.body.address,
     req.body.delivery_status,
   ];
-  console.log(values)
+
   connection.query(q, [...values,req.body.customer_id], (err, data) => {
     if (err) return res.json(err);
     return res.json("Edit placed order!");
@@ -584,7 +584,7 @@ app.get("/filteredData", (req, res) => {
   } else if (sort === "expensive") {
     q += " order by price desc"
   }
-  connection.query(q, queryArray, (err,data) => {
+  customerConnection.query(q, queryArray, (err,data) => {
     if (err) return res.json(err);
     return res.json(data)
   })
@@ -596,5 +596,44 @@ app.put("/checkQuantity/:id", (req, res) => {
   connection.query(q, userId, (err, data) => {
     if(err) return res.json(err)
     return res.json(data)
+  })
+})
+
+//placed order
+app.post("/placeOrder", (req, res) => {
+  const q = "call placeOrder(?, ?, ?, ?, ?, ?, ?)";
+  const values = [req.body.total, req.body.customer_id, req.body.f_name, req.body.l_name, req.body.email, req.body.address, req.body.delivery_status];
+  connection.query(q, values, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+}); 
+
+app.put("/acceptOrder/:id", (req, res) => {
+  const q = "update outbound_order set `delivery_status` = 'accept' where customer_id = ?";
+  const userId = req.params.id;
+
+  connection.query(q, userId, (err, data) => {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
+app.put("/rejectOrder/:id", (req, res) => {
+  const q = "update outbound_order set `delivery_status` = 'reject' where customer_id = ?";
+  const userId = req.params.id;
+  connection.query(q, userId, (err, data) => {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
+//delete order from cart
+app.delete("/deleteOrder/:id", (req, res) => {
+  const userId = req.params.id;
+  const q = "DELETE FROM outbound_order WHERE customer_id = ?";
+  connection.query(q, userId, (err) => {
+    if (err) return res.json(err);
+    return res.json("Order deleted!");
   })
 })

@@ -44,7 +44,6 @@ export default function CategoryCreate() {
       properties[index].name = newName;
       return properties;
     })
-    console.log({index, prop, newName})
   }
 
   function handlePropertyTypeChange(index, prop, newType) {
@@ -53,7 +52,6 @@ export default function CategoryCreate() {
       properties[index].type = newType;
       return properties;
     })
-    console.log({index, prop, newType})
   }
 
   function handlePropertyRequireChange(index, prop, newRequire) {
@@ -62,7 +60,6 @@ export default function CategoryCreate() {
       properties[index].required = newRequire;
       return properties;
     })
-    console.log({index, prop, newRequire})
   }
 
    function removeProp(indexToRemove) {

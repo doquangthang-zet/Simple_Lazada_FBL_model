@@ -26,7 +26,6 @@ export default function SellerInboundOrders() {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log(inbound);
       try {
         await axios
           .post(`http://localhost:4000/createInbound`, inbound)
@@ -63,7 +62,7 @@ export default function SellerInboundOrders() {
             </label>
           </div>
 
-          {product == null ? (
+          {!product ? (
             <div> You have no product</div>
           ) : (
             <div class="mb-3">

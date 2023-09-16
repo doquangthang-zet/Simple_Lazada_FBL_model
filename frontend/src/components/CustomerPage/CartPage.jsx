@@ -44,7 +44,6 @@ const Cart = () => {
       .then((res) => {
         if (res.data.Status === "Success") {
           sessionStorage.setItem("user", JSON.stringify(res.data));
-          console.log(res.data);
           setAuth(true);
           setUserId(res.data.id);
           setName(res.data.name);
@@ -63,17 +62,14 @@ const Cart = () => {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-          console.log(data)
       });
   }
 
   function fecthCartItems() {
-    console.log(userId);
     axios
       .get("http://localhost:4000/cart", { params: { id: userId } })
       .then((res) => {
         setCartItems(res.data);
-        console.log(res.data);
       });
   }
 
@@ -108,9 +104,13 @@ const Cart = () => {
   };
 
   function checkout() {
-    checkQuantity(userId).then(res => console.log(res))
-    sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
-    navigate("/checkout");
+    if (cartItems.length > 0) {
+      checkQuantity(userId).then(res => console.log(res))
+      sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
+      navigate("/checkout");
+    } else {
+      alert("Please buy something!")
+    }
   }
 
   return (

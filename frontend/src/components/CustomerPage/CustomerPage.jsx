@@ -55,7 +55,6 @@ const CustomerPage = () => {
         .then(res => {
             if(res.data.Status === "Success") {
                 sessionStorage.setItem("user", JSON.stringify(res.data));
-                console.log(res.data)
                 setAuth(true)
                 setUserId(res.data.id)
                 setName(res.data.name)
@@ -83,7 +82,6 @@ const CustomerPage = () => {
     }
 
     function fecthCartItems() {
-        console.log(userId)
         axios.get('http://localhost:4000/cart', {params: {id: userId}})
         .then((res) => {
             setCartItems(res.data);
@@ -96,9 +94,7 @@ const CustomerPage = () => {
         }
     }
     const add = (id) => {
-        // console.log(id)
         let item = {productId: id, quantity: 1, customerId: userId}
-        // console.log(item)
         setOrders({
             productId: id,
             quantity: 1,
@@ -114,22 +110,16 @@ const CustomerPage = () => {
                 fecthCartItems()
             }
         })
-        // console.log(order)
-        
-        // addToCart()
     }
 
     const handleChange = ({ currentTarget: input }) => {
         setDataPrams( { ...dataParams, [input.name]: input.value });
-        console.log(dataParams)
     };
 
     const browserProduct = () => {
-        console.log(userId)
         axios.get('http://localhost:4000/filteredData', {params: dataParams})
         .then((res) => {
             setProducts(res.data);
-            console.log(res.data)
         })
     }
 
@@ -159,7 +149,7 @@ const CustomerPage = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart text-primary m-2" viewBox="0 0 16 16">
                                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
                                 </svg>
-                                Cart ({cartItems.length})
+                                Cart ({cartItems?.length})
                             </NavLink>
                         </div>
 
@@ -197,7 +187,7 @@ const CustomerPage = () => {
             <div class = "container">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="homepage btn-group" role="group">
+                        <div class="homepage btn-group d-flex justify-content-between" role="group">
 
                             <label for="category">Choose a cartegory:  </label>
                             <select name="category" id="category" value={dataParams.category} onChange={handleChange}>
@@ -238,29 +228,20 @@ const CustomerPage = () => {
 
             <div class="container">
                 <div class="row g-2">
-                    {products && products?.map(item => (
-                         <div class="card col-xl-3 col-lg-3 col-md-3 col-sm-6 product-card" style={{width: 18+'rem'}}>
-                         {/* <a class="card-block stretched-link text-decoration-none " href> */}
-                             <img class="card-img-top" src={imageBasePath + item.image} alt="Card image cap" />
-                             <div class="card-body">
-                                 <h5 class="card-title">{item.title}</h5>
-                                 <p class = "card-text">{item.description}</p>
-                                 <p class="card-text">{item.price}</p>
-                                 {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
-                             </div>
-                             <input type="button" onClick={() => add(item.id)} value='Add to cart' class="btn btn-primary" />
-                             {/* <form onSubmit={add(item.id)}>
-                                <input type="hidden" name="id" value={item.id} />
-                                <input type="hidden" name="name" value={item.title} />
-                                <input type="hidden" name="price" value={item.price} />
-                                <input type="hidden" name="categrory" value={item.category} />
-                                <input type="hidden" name="sellerid" value={item.sellerId} />
-                                <input type="hidden" name="quantity" value="1" />
+                    {products && products.map(pro => (
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
+                            <div class="d-flex flex-column product-card">
+                                <div class="d-flex justify-content-center align-items-center bg-light">
+                                    <img class="product-img" src={imageBasePath + pro.image} />
+                                </div>
 
-                                <input type="submit" onClick={() => console.log("hello")} value='Add to cart' class="btn btn-primary" />
-                             </form> */}
-                         {/* </a> */}
-                     </div>
+                                <div class="text-center">
+                                    <h5>{pro.title}</h5>
+                                    <p>${pro.price}</p>
+                                </div>
+                                <input type="button" onClick={() => add(pro.id)} value='Add to cart' class="btn btn-primary" />
+                            </div> 
+                        </div>
                     ))}
                 </div>
             </div>

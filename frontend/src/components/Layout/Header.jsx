@@ -19,7 +19,6 @@ export default function Header () {
         .then(res => {
             if(res.data.Status === "Success") {
                 localStorage.setItem("user", JSON.stringify(res.data));
-                console.log(res.data)
                 setAuth(true)
                 setUserId(res.data.id)
                 setName(res.data.name)
