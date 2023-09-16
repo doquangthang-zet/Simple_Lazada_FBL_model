@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Header from "../Layout/Header";
 import SellerPage from "./SellerPage";
 import SideBar from "../Layout/SideBar";
@@ -10,7 +10,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Seller() {
-
+    const navigate = useNavigate()
+    useEffect(() => {
+        getUser()
+    }, [])
+    function getUser() {
+        axios.get("http://localhost:4000")
+        .then(res => {
+            if(res.data.Status !== "Success") {
+                navigate("/login")
+            }
+            if (res.data.role !== 'seller') {
+                navigate("/login")
+              }
+        })
+    }
     return (
         <div>
             <Header />

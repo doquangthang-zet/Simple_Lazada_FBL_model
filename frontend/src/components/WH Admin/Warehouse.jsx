@@ -5,6 +5,7 @@ import axios from "axios";
 
 export default function WarehouseList() {
   const [warehouse, setWarehouse] = useState([]);
+  const [warehouseSpace, setWarehouseSpace] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:4000/warehouse`)
@@ -12,6 +13,12 @@ export default function WarehouseList() {
       .then((data) => {
         setWarehouse(data);
       });
+
+    fetch(`http://localhost:4000/warehouseAvailableSpace`)
+      .then((res) => res.json())
+      .then((data) => {
+        setWarehouseSpace(data);
+    });
   }, []);
 
   const handleDelete = async (id) => {
@@ -49,6 +56,7 @@ export default function WarehouseList() {
               <th scope="col">Name</th>
               <th scope="col">Address</th>
               <th scope="col">Volume</th>
+              <th scope="col">Available Volume</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
@@ -59,6 +67,7 @@ export default function WarehouseList() {
                 <td> {item.wName} </td>
                 <td> {item.address} </td>
                 <td> {item.volume} </td>
+                <td> {warehouseSpace.filter(w => w.wid === item.wId).map(w => w.available)} </td>
                 <td>
                   <NavLink to={`/admin/editWarehouse/${item.wId}`}>
                     <button type="button" class="actionBtn editBtn">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
+import { checkQuantity, deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
 import axios from "axios";
 // import Header from './Layout/Header'
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const Cart = () => {
   const [auth, setAuth] = useState(false);
   const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("user"))?.id || 0
+    JSON.parse(sessionStorage.getItem("user"))?.id || 0
   );
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -25,7 +25,7 @@ const Cart = () => {
     axios
       .get("http://localhost:4000/logout")
       .then((res) => {
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
         window.location.reload(true);
       })
       .catch((err) => console.log(err));
@@ -43,16 +43,16 @@ const Cart = () => {
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
-          localStorage.setItem("user", JSON.stringify(res.data));
-          console.log(res.data);
+          sessionStorage.setItem("user", JSON.stringify(res.data));
           setAuth(true);
           setUserId(res.data.id);
           setName(res.data.name);
           setRole(res.data.role);
         } else {
-          localStorage.removeItem("user");
+          sessionStorage.removeItem("user");
           setAuth(false);
           setMsg(res.data.Error);
+          navigate("/login")
         }
       })
       .then((err) => console.log(err));
@@ -62,17 +62,14 @@ const Cart = () => {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-          console.log(data)
       });
   }
 
   function fecthCartItems() {
-    console.log(userId);
     axios
       .get("http://localhost:4000/cart", { params: { id: userId } })
       .then((res) => {
         setCartItems(res.data);
-        console.log(res.data);
       });
   }
 
@@ -83,7 +80,7 @@ const Cart = () => {
 
   let total = 0;
   for (const proId of cartItems) {
-    const price = products.find((p) => p.id === proId.productId)?.price || 0;
+    const price = products.find((p) => p.id === proId.productId)?.price * proId.quantity || 0;
     total += price;
   }
 
@@ -107,8 +104,13 @@ const Cart = () => {
   };
 
   function checkout() {
-    localStorage.setItem("cart", JSON.stringify([cartItems, total]));
-    navigate("/checkout");
+    if (cartItems.length > 0) {
+      checkQuantity(userId).then(res => console.log(res))
+      sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
+      navigate("/checkout");
+    } else {
+      alert("Please buy something!")
+    }
   }
 
   return (

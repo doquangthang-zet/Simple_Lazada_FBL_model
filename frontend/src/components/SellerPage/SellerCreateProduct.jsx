@@ -44,6 +44,7 @@ export default function SellerCreateProduct() {
                 setProduct( { ...product, ["sellerId"]: res.data.id });
             } else {
                 setMsg(res.data.Error)
+                navigate("/login")
             }
         })
         .then(err => console.log(err))
@@ -67,16 +68,13 @@ export default function SellerCreateProduct() {
         }
     }
       const saveProduct = async (e) => {
-        
         e.preventDefault();
-        console.log(product)
-        console.log(productProperties)
         try {
             await axios.post("http://localhost:4000/createProduct", product, config)
             navigate(`/seller/${id}/products`);
           } catch (err) {
             console.log(err)
-          }  // fetchProduct()
+          }
     }
 
     const propertiesToFill = []

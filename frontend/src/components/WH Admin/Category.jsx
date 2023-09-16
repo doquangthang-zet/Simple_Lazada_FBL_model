@@ -13,7 +13,6 @@ function CategoryList({swal})  {
     fetchProduct()
     getAllCates().then(res => {
       setCategories(res.cate)
-      console.log(res)
     })
   }, [])
 
@@ -67,7 +66,6 @@ function CategoryList({swal})  {
           deleteCateById(cate._id)
           fetchCategories()
         }
-          console.log({result})
       });
     } else {
       swal.fire({
