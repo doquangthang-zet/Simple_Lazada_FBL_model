@@ -118,16 +118,18 @@ const CustomerPage = () => {
     // Handle filter options changes
     const handleCateChange = ({ currentTarget: input }) => {
         const cateToSearch = []
-        if (categories.length > 0) {
-            let selCate = categories.find(({_id}) => _id === input.value)
+        if (categories?.length > 0) {
+            let selCate = categories?.find(({_id}) => _id === input.value)
             cateToSearch.push(selCate._id)
-            while(categories.find(({parent}) => parent?._id === selCate?._id)) {
+
+            console.log(categories?.find(({parent}) => parent?._id === selCate?._id))
+            while(categories?.find(({parent}) => parent?._id === selCate?._id)) {
                 const childCate = categories.find(({parent}) => parent?._id === selCate?._id)
                 cateToSearch.push(childCate._id)
                 selCate = childCate;
             }
         }
-        setDataPrams( { ...dataParams, [input.name]: [cateToSearch] });
+        setDataPrams( { ...dataParams, [input.name]: cateToSearch });
     };
 
     // Get all products with filtering options
@@ -202,7 +204,7 @@ const CustomerPage = () => {
                         <div class="homepage btn-group d-flex justify-content-between" role="group">
 
                             <label for="category">Choose a cartegory:  </label>
-                            <select name="category" id="category" value={dataParams.category} onChange={handleCateChange}>
+                            <select name="category" id="category" value={dataParams.category[0]} onChange={handleCateChange}>
                                 <option value="">Un-categorized</option>
                                 {categories.length > 0 && categories.map(cate => (
                                     <option value={cate._id}>{cate.name}</option>
