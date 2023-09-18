@@ -27,6 +27,7 @@ const CustomerPage = () => {
     const [userId, setUserId] = useState(JSON.parse(sessionStorage.getItem("user"))?.id || 0)
     const [name, setName] = useState('')
     const [role, setRole] = useState('')
+    const navigate = useNavigate()
     const handleLogout = () => {
         axios.get("http://localhost:4000/logout")
         .then(res => {
@@ -91,23 +92,28 @@ const CustomerPage = () => {
 
     // Add product to cart
     const add = (id) => {
-        let item = {productId: id, quantity: 1, customerId: userId}
-        setOrders({
-            productId: id,
-            quantity: 1,
-            customerId: userId
-        })
-        getOneCartItems(userId, id).then(res => {
-            if (res.length > 0) {
-                item.quantity = res[0].quantity + 1
-                updateCartItem(res[0].id, item)
-                fecthCartItems()
-            } else {
-                saveNewCartItem(item)
-                fecthCartItems()
-            }
-            alert("Successfully add product to cart!")
-        })
+        if (auth) {
+            let item = {productId: id, quantity: 1, customerId: userId}
+            setOrders({
+                productId: id,
+                quantity: 1,
+                customerId: userId
+            })
+            getOneCartItems(userId, id).then(res => {
+                if (res.length > 0) {
+                    item.quantity = res[0].quantity + 1
+                    updateCartItem(res[0].id, item)
+                    fecthCartItems()
+                } else {
+                    saveNewCartItem(item)
+                    fecthCartItems()
+                }
+                alert("Successfully add product to cart!")
+            })
+        } else {
+            navigate("/login")
+        }
+        
     }
 
     // Handle filter options changes
