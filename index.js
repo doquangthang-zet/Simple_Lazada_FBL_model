@@ -567,11 +567,11 @@ app.get("/filteredData", (req, res) => {
   let q="SELECT * FROM product where (lower(title) like ? or lower(description) like ?)";
   queryArray.push(search)
   queryArray.push(search)
-
-  if (category) {
+ 
+  if (category !== undefined) {
     q += " and (category = ?";
     queryArray.push(category[0])
-    for (let i = 1; i < category.length; i++) {
+    for (let i = 1; i < category?.length; i++) {
       q += " or category = ?";
       queryArray.push(category[i])
     }
