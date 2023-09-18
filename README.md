@@ -4,8 +4,8 @@
 
 
 
-Contribution form:
-Doan Thien Di (s3926977): 5 points
-Tran Thuc Ai Quynh (s3872104): 5 points
-Do Quang Thang (s3891873): 5 points
+# Contribution form:
+#Doan Thien Di (s3926977): 5 points
+#Tran Thuc Ai Quynh (s3872104): 5 points
+#Do Quang Thang (s3891873): 5 points
 
