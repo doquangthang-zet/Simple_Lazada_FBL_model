@@ -87,6 +87,7 @@ insert into warehouse(wName, address, volume) values
 insert into product values 
 (1, "Samsung", "Galaxy Y", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1000, 0.9, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
 (2, "Iphone", "14Pro", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 0.5, 1, 1, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35"),
+
 (3, "Oppo", "neo 5", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39"),
 (4, "Kid's Raincoat", "Full Body for both girls","image-1695007301888.058128071001aa99bcedc67445225d53.png_2200x2200q80.png_.webp",1470,2,0.5, 1,"6507bec5cfbc86e4a8a76670",null,5,"2023-09-18T03:21:42.000Z"),
 (5,"Kid's cap"," cartoon bee sun hat, baby visor", "image-1695007392177.d79f11ee7b5431c6d7a7da7453328658.jpg_2200x2200q80.jpg_.webp",890,0.5,0.5,0.5,"6507beb6cfbc86e4a8a76664",null,5,"2023-09-18T03:23:12.000Z"),
@@ -112,6 +113,7 @@ null,null,"2023-09-18T03:39:53.000Z"),
 (20,"ASUS X509FJ","ASUS X509FJ CORE I5 8265U RAM 8G SSD 256G 15.6INCH FHD VGA","image-1695008790217.09d9b7db8a924f0ac7a0ba698f1f94b3.jpg_2200x2200q80.jpg_.webp",7500,20,15.6, 10,"6507bd02cfbc86e4a8a765a1", null, null,"2023-09-18T03:46:30.000Z"),
 (21,"Kindle Paperwhite Gen 3","Portable reading book Kindle Paperwhite Gen 3 (7th) backlit Screen 6 300ppi Ram 512MB memory 4GB","image-1695008859959.481771e908c510c9c56b4e362d813185.jpg_2200x2200q80.jpg_.webp",
 11980,5, 6,5,"6507bcfbcfbc86e4a8a76595",null,null,"2023-09-18T03:47:40.000Z");
+
 
 insert into product_inventory(product_id, warehouse_id, quantity, total_volume) values 
 (1, 2, 200, 180),
