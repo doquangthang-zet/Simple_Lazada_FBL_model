@@ -558,13 +558,13 @@ app.get("/getOneOrder/:id", (req, res) => {
 
 // Filter product based on search, filter, etc.
 app.get("/filteredData", (req, res) => {
-  const search = `${req.query.search}%`;
+  const search = `${req.query.search.toLowerCase()}%`;
   const filter = req.query.filter;
   const category = req.query.category;
   const sort = req.query.sort;
   let queryArray = []
 
-  let q="SELECT * FROM product where (title like ? or description like ?)";
+  let q="SELECT * FROM product where (lower(title) like ? or lower(description) like ?)";
   queryArray.push(search)
   queryArray.push(search)
 
