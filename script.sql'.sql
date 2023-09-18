@@ -87,7 +87,31 @@ insert into warehouse(wName, address, volume) values
 insert into product values 
 (1, "Samsung", "Galaxy Y", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1000, 0.9, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
 (2, "Iphone", "14Pro", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 0.5, 1, 1, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35"),
-(3, "Oppo", "neo 5", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39");
+(3, "Oppo", "neo 5", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39"),
+(4, "Kid's Raincoat", "Full Body for both girls","image-1695007301888.058128071001aa99bcedc67445225d53.png_2200x2200q80.png_.webp",1470,2,0.5, 1,"6507bec5cfbc86e4a8a76670",null,5,"2023-09-18T03:21:42.000Z"),
+(5,"Kid's cap"," cartoon bee sun hat, baby visor", "image-1695007392177.d79f11ee7b5431c6d7a7da7453328658.jpg_2200x2200q80.jpg_.webp",890,0.5,0.5,0.5,"6507beb6cfbc86e4a8a76664",null,5,"2023-09-18T03:23:12.000Z"),
+(6,"Men's jeans","MOLAN High quality men's jeans casual comfort fashion loose straight leg high street trend wide leg pants","image-1695007545925.1cdf35234ca78b5f66507b949a74f719.jpg_2200x2200q80.jpg_.webp",2210, 3,0.5, 0, "6507bea1cfbc86e4a8a76658",null,5,"2023-09-18T03:25:46.000Z"),
+(7,"Combat boots","Leather","image-1695007647644.252ca6b93e9b6b9fcd75be456c8ae0ce.jpg_2200x2200q80.jpg_.webp",6450,2,2,3,"6507be90cfbc86e4a8a7664c",null,null, "2023-09-18T03:27:28.000Z"),
+(8,"Louis handbag","100% Original Louis women's simple handbag, shoulder bag, crossbody shopping bag, Korean elegant and fashionable style, large capacity versatile women's bag 1:1 counter quality 384", "image-1695007714225.ef3311c85043a725c48228771e113e44.jpg_2200x2200q80.jpg_.webp",
+7560,1,1,1,"6507be87cfbc86e4a8a76640",null,null, "2023-09-18T03:28:34.000Z"),
+(9, " Lolita Shoes","Lolita barbie shoes","image-1695007846674.a05c9247ef08de4cda812e69d28db308.png_2200x2200q80.png_.webp",2190,2, 1.5,1,"6507be78cfbc86e4a8a76634",null,null,"2023-09-18T03:30:47.000Z"),
+(10, "Korean Redbeans","850g","image-1695007905288.318e5f4b64d40d08177ef12fbeb7c2da.png_2200x2200q80.png_.webp",1010,2,2,4,"6507be62cfbc86e4a8a76628",null,null,"2023-09-18T03:31:45.000Z"),
+(11, "Bretel Butter","250g", "image-1695008015936.images.jfif",1280,2,4,1,"6507be4ccfbc86e4a8a7661c",null,null,"2023-09-18T03:33:36.000Z"),
+(12,"Blackpink Plush Pillowcase","Blackpink Plush Pillowcase 16x24 in Sofa Pillowcase Home Decor Pillowcase","image-1695008126368.e71bea52c04f43f635e4084847b40252.jpg_360x360q75.jpg_.webp",820,
+3, 0.5, 4,"6507be34cfbc86e4a8a76610",null,null,"2023-09-18T03:35:26.000Z"),
+(13,"Mooncake Baking Tray","Plastic, 500g,600g,700,800,1kg ,1,2kg","image-1695008232567.images (1).jfif",1090,0,2,2,"6507be26cfbc86e4a8a76604",null,null, "2023-09-18T03:37:13.000Z"),
+(14,"Baby Stroller","portable lightweight two-way advanced version baby stroller with attractive gift for babies, shrink the car in a moment","image-1695008316017.71-POsLtREL.jpg",
+4290,0,80,26,"6507be08cfbc86e4a8a765f8",null,null,"2023-09-18T03:38:36.000Z"),
+(15,"Baby convertible cot bed""baby crib, baby cot bed, Marlow, Solid White","image-1695008393137.d624330fddcce45f30d31e748f219d09.jpg_2200x2200q80.jpg_.webp",25990,142,75,86, "6507bdfacfbc86e4a8a765ec",
+null,null,"2023-09-18T03:39:53.000Z"),
+(16,"Body Lotion Snow White","Snow White Milky Pack 200g","image-1695008484328.1681967601315-kem-u-trang-snow-white-milky-pack-1.jpeg",2590,4, 4,1.5,"6507bddacfbc86e4a8a765e0",null,null,"2023-09-18T03:41:24.000Z"),
+(17,"O. Oil controlled powder","O. Oil controlled powder TW O.O full 24 hours long lasting long lasting matte finish 3 color liquid texture compact Highlight Powder SPF 30 with mirror",
+"image-1695008566017.067b74ee93461ec4f7d3968a75e5d7f7.jpg_360x360q75.jpg_.webp",1490,2,2,1, "6507bdd1cfbc86e4a8a765d4", null, null,"2023-09-18T03:42:46.000Z"),
+(18," Retinol Zo Skin Brightener 0.5%","Anti-Aging Cream","image-1695008641920.Se69e53422f5743b290ba016fcf7274d16.jpg_2200x2200q80.jpg_.webp", 3950,4,2,4,"6507bdbbcfbc86e4a8a765c8", null,null, "2023-09-18T03:44:02.000Z"),
+(19,"Tivi Xiaomi", "Tivi Xiaomi EA43 2022 Series (1Gb + 8Gb)/60Hz","image-1695008709768.d7d7c5bed7bbf33542bfb254898f063b.png_2200x2200q80.png_.webp",46900,20,43,20,"6507bd98cfbc86e4a8a765af",null, null,"2023-09-18T03:45:10.000Z"),
+(20,"ASUS X509FJ","ASUS X509FJ CORE I5 8265U RAM 8G SSD 256G 15.6INCH FHD VGA","image-1695008790217.09d9b7db8a924f0ac7a0ba698f1f94b3.jpg_2200x2200q80.jpg_.webp",7500,20,15.6, 10,"6507bd02cfbc86e4a8a765a1", null, null,"2023-09-18T03:46:30.000Z"),
+(21,"Kindle Paperwhite Gen 3","Portable reading book Kindle Paperwhite Gen 3 (7th) backlit Screen 6 300ppi Ram 512MB memory 4GB","image-1695008859959.481771e908c510c9c56b4e362d813185.jpg_2200x2200q80.jpg_.webp",
+11980,5, 6,5,"6507bcfbcfbc86e4a8a76595",null,null,"2023-09-18T03:47:40.000Z");
 
 insert into product_inventory(product_id, warehouse_id, quantity, total_volume) values 
 (1, 2, 200, 180),
@@ -507,8 +531,8 @@ grant select, insert, update, delete on lazada.delivery_items to admin_role;
 grant execute on procedure moveProduct to admin_role;
 grant execute on procedure deleteWarehouse to admin_role;
 grant execute on procedure createWarehouse to admin_role;
-grant execute on procedure selectWarehouse to admin_role;
--- grant execute on procedure checkout to admin_role;
+-- grant execute on procedure selectWarehouse to admin_role;
+grant execute on procedure checkout to admin_role;
 -- grant execute on procedure placeOrder to admin_role;
 -- grant execute on procedure acceptDelivery to admin_role;
 -- grant execute on procedure rejectDelivery to admin_role;
