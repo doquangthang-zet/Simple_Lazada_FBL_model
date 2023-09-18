@@ -3,6 +3,9 @@
 UI Link: https://www.figma.com/file/JifPWHp7vZOAu6HVLV0zis/Database-UI?type=design&node-id=0%3A1&mode=design&t=EuDFQtNtercSzPXk-1
 
 Presentation video link:
+Youtube: https://www.youtube.com/watch?v=vnP9z6DBgCI
+or 
+Drive: https://drive.google.com/file/d/141RTbobM2yBUkVkZSfV2fq_mWDJ5QWPb/view?fbclid=IwAR01J_nfJ5fWoW6pdwixbrfKb3WztpwVS2dYTXjE8khIRBMSZzRpRfQiHLw
 
 # Contribution form:
 Doan Thien Di (s3926977): 5 points
