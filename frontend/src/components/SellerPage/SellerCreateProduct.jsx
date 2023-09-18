@@ -18,11 +18,13 @@ export default function SellerCreateProduct() {
         width: 0,
         height: 0,
         category: '',
+        sellerId: 0,
     })
     const navigate = useNavigate()
 
     useEffect(() => {
         fetchCategories()
+        setProduct({ ...product, ["sellerId"]: userId })
     }, []);
 
     // Get all categories
