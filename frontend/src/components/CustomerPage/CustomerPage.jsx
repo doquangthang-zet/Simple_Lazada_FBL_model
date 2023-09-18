@@ -248,7 +248,8 @@ const CustomerPage = () => {
                                 </div>
 
                                 <div class="text-center">
-                                    <h5>{pro.title}</h5>
+                                    <h5>{pro.title.length>20 ? pro.title.slice(0, 20) + "..." : pro.title}</h5>
+                                    <p>{pro.description.length>20 ? pro.description.slice(0, 20) + "..." : pro.description}</p>
                                     <p>${pro.price}</p>
                                 </div>
                                 <input type="button" onClick={() => add(pro.id)} value='Add to cart' class="btn btn-primary" />

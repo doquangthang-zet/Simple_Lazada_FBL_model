@@ -558,7 +558,7 @@ app.get("/getOneOrder/:id", (req, res) => {
 
 // Filter product based on search, filter, etc.
 app.get("/filteredData", (req, res) => {
-  const search = `%${req.query.search}%`;
+  const search = `${req.query.search}%`;
   const filter = req.query.filter;
   const category = req.query.category;
   const sort = req.query.sort;
