@@ -567,9 +567,14 @@ app.get("/filteredData", (req, res) => {
   let q="SELECT * FROM product where (title like ? or description like ?)";
   queryArray.push(search)
   queryArray.push(search)
-  if (category !== "") {
-    q += " and category = ?";
-    queryArray.push(category)
+  if (category[0].length > 0) {
+    q += " and (category = ?";
+    queryArray.push(category[0][0])
+    for (let i = 1; i < category[0].length; i++) {
+      q += " or category = ?";
+      queryArray.push(category[0][i])
+    }
+    q += ")"
   }
   
   if (filter === "smaller1000") {
