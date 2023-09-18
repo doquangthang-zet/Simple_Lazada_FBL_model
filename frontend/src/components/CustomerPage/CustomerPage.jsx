@@ -27,6 +27,7 @@ const CustomerPage = () => {
     const [userId, setUserId] = useState(JSON.parse(sessionStorage.getItem("user"))?.id || 0)
     const [name, setName] = useState('')
     const [role, setRole] = useState('')
+    const navigate = useNavigate()
     const handleLogout = () => {
         axios.get("http://localhost:4000/logout")
         .then(res => {
@@ -91,23 +92,28 @@ const CustomerPage = () => {
 
     // Add product to cart
     const add = (id) => {
-        let item = {productId: id, quantity: 1, customerId: userId}
-        setOrders({
-            productId: id,
-            quantity: 1,
-            customerId: userId
-        })
-        getOneCartItems(userId, id).then(res => {
-            if (res.length > 0) {
-                item.quantity = res[0].quantity + 1
-                updateCartItem(res[0].id, item)
-                fecthCartItems()
-            } else {
-                saveNewCartItem(item)
-                fecthCartItems()
-            }
-            alert("Successfully add product to cart!")
-        })
+        if (auth) {
+            let item = {productId: id, quantity: 1, customerId: userId}
+            setOrders({
+                productId: id,
+                quantity: 1,
+                customerId: userId
+            })
+            getOneCartItems(userId, id).then(res => {
+                if (res.length > 0) {
+                    item.quantity = res[0].quantity + 1
+                    updateCartItem(res[0].id, item)
+                    fecthCartItems()
+                } else {
+                    saveNewCartItem(item)
+                    fecthCartItems()
+                }
+                alert("Successfully add product to cart!")
+            })
+        } else {
+            navigate("/login")
+        }
+        
     }
 
     // Handle filter options changes
@@ -118,16 +124,18 @@ const CustomerPage = () => {
     // Handle filter options changes
     const handleCateChange = ({ currentTarget: input }) => {
         const cateToSearch = []
-        if (categories.length > 0) {
-            let selCate = categories.find(({_id}) => _id === input.value)
+        if (categories?.length > 0) {
+            let selCate = categories?.find(({_id}) => _id === input.value)
             cateToSearch.push(selCate._id)
-            while(categories.find(({parent}) => parent?._id === selCate?._id)) {
+
+            console.log(categories?.find(({parent}) => parent?._id === selCate?._id))
+            while(categories?.find(({parent}) => parent?._id === selCate?._id)) {
                 const childCate = categories.find(({parent}) => parent?._id === selCate?._id)
                 cateToSearch.push(childCate._id)
                 selCate = childCate;
             }
         }
-        setDataPrams( { ...dataParams, [input.name]: [cateToSearch] });
+        setDataPrams( { ...dataParams, [input.name]: cateToSearch });
     };
 
     // Get all products with filtering options
@@ -202,7 +210,7 @@ const CustomerPage = () => {
                         <div class="homepage btn-group d-flex justify-content-between" role="group">
 
                             <label for="category">Choose a cartegory:  </label>
-                            <select name="category" id="category" value={dataParams.category} onChange={handleCateChange}>
+                            <select name="category" id="category" value={dataParams.category[0]} onChange={handleCateChange}>
                                 <option value="">Un-categorized</option>
                                 {categories.length > 0 && categories.map(cate => (
                                     <option value={cate._id}>{cate.name}</option>
