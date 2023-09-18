@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { checkQuantity, deleteCartItemsByID, deleteOrderByID, updateCartItem } from "../../api/app";
 import axios from "axios";
-// import Header from './Layout/Header'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { BsPlusSquare } from "react-icons/bs";
 import { PiMinusSquare } from "react-icons/pi";
@@ -13,24 +12,9 @@ const Cart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState([]);
-
-  const [auth, setAuth] = useState(false);
-  const [msg, setMsg] = useState("");
   const [userId, setUserId] = useState(
     JSON.parse(sessionStorage.getItem("user"))?.id || 0
   );
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("");
-  const handleLogout = () => {
-    axios
-      .get("http://localhost:4000/logout")
-      .then((res) => {
-        sessionStorage.removeItem("user");
-        window.location.reload(true);
-      })
-      .catch((err) => console.log(err));
-  };
-  // axios.defaults.withCredentials = true;
 
   useEffect(() => {
     fetchUser();
@@ -38,25 +22,21 @@ const Cart = () => {
     fecthCartItems();
   }, []);
 
+  // Check if user logged in or not
   function fetchUser() {
     axios
       .get("http://localhost:4000")
       .then((res) => {
         if (res.data.Status === "Success") {
-          sessionStorage.setItem("user", JSON.stringify(res.data));
-          setAuth(true);
           setUserId(res.data.id);
-          setName(res.data.name);
-          setRole(res.data.role);
         } else {
-          sessionStorage.removeItem("user");
-          setAuth(false);
-          setMsg(res.data.Error);
           navigate("/login")
         }
       })
       .then((err) => console.log(err));
   }
+
+  // Get all products
   function fetchProduct() {
     fetch(`http://localhost:4000/product`)
       .then((res) => res.json())
@@ -65,6 +45,7 @@ const Cart = () => {
       });
   }
 
+  // Get all items in cart
   function fecthCartItems() {
     axios
       .get("http://localhost:4000/cart", { params: { id: userId } })
@@ -73,23 +54,27 @@ const Cart = () => {
       });
   }
 
+  // Delete an item in cart
   const handleDelete = (item) => {
     deleteCartItemsByID(item.id);
     window.location.reload();
   };
 
+  // Calculate total price
   let total = 0;
   for (const proId of cartItems) {
     const price = products.find((p) => p.id === proId.productId)?.price * proId.quantity || 0;
     total += price;
   }
 
+  // Increse item quantity in cart
   const addQuantity = (item) => {
     let newItem = {productId: item.productId, quantity: item.quantity + 1, customerId: item.customer_id}
     updateCartItem(item.id, newItem)
     window.location.reload();
   };
 
+  // Decrese items quantity in cart
   const minusQuantity = (item) => {
     let newItem = {productId: item.productId, quantity: item.quantity - 1, customerId: item.customer_id}
 
@@ -103,10 +88,12 @@ const Cart = () => {
     }
   };
 
+  // Check valid item quantity and remove invalid
   function checkout() {
     if (cartItems.length > 0) {
       checkQuantity(userId).then(res => console.log(res))
       sessionStorage.setItem("cart", JSON.stringify([cartItems, total]));
+      alert("Successfully! System will remove some invalid product!")
       navigate("/checkout");
     } else {
       alert("Please buy something!")
@@ -170,11 +157,9 @@ const Cart = () => {
           <div className="total">Total Price: ${total}</div>
         </div>
 
-        {/* <Link to="/checkout"> */}
         <button type="button" class="actionBtn" onClick={() => checkout()}>
           Checkout
         </button>
-        {/* </Link> */}
       </div>
     </div>
   );

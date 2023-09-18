@@ -3,6 +3,7 @@ import axios from "axios";
 const baseUrl = "http://localhost:4000/";
 
 // Categories part
+// Get all categories
 export const getAllCates = async () => {
     try {
         const res = await axios.get(`${baseUrl}api/category/getAll`);
@@ -12,6 +13,7 @@ export const getAllCates = async () => {
     }
 }
 
+// Crate new category
 export const saveNewCate = async (data) => {
     try {
         const res = axios.post(`${baseUrl}api/category/save`, {...data});
@@ -21,6 +23,7 @@ export const saveNewCate = async (data) => {
     }
 }
 
+// Get one cate by id
 export const getOneCate = async (cateId) => {
     try {
         const res = await axios.get(`${baseUrl}api/category/getOne/${cateId}`);
@@ -30,6 +33,7 @@ export const getOneCate = async (cateId) => {
     }
 }
 
+// Edit category
 export const updateCategory = async (cateId, data) => {
     try {
         const res = axios.put(`${baseUrl}api/category/update/${cateId}`, {...data});
@@ -39,6 +43,7 @@ export const updateCategory = async (cateId, data) => {
     }
 }
 
+// Delete catefory
 export const deleteCateById = async (cateId) => {
     try {
         const res = axios.delete(`${baseUrl}api/category/delete/${cateId}`);
@@ -49,7 +54,7 @@ export const deleteCateById = async (cateId) => {
 }
 
 // Product part
-
+// Get all products
 export const getAllProducts = async (sellerId) => {
     try {
         const res =  axios.get(`${baseUrl}product/${sellerId}`);
@@ -59,6 +64,7 @@ export const getAllProducts = async (sellerId) => {
     }
 }
 
+// Save new product
 export const saveNewProduct = async (data) => {
     try {
         const res = axios.post(`${baseUrl}createProduct`, {...data});
@@ -68,6 +74,7 @@ export const saveNewProduct = async (data) => {
     }
 }
 
+//Delete product
 export const deleteProductById = async (proId) => {
     try {
         const res = await axios.delete("http://localhost:4000/deleteProduct/" + proId);
@@ -77,6 +84,7 @@ export const deleteProductById = async (proId) => {
     }
 }
 
+// Get one product
 export const getOneProduct = async (proId) => {
     try {
         const res = await axios.get(`${baseUrl}getOneProduct/${proId}`);
@@ -86,6 +94,8 @@ export const getOneProduct = async (proId) => {
     }
 }
 
+
+//Edit product
 export const updateProduct = async (proId, data) => {
     try {
         const res = axios.put(`${baseUrl}editProduct/${proId}`, {...data}, {headers: {
@@ -97,6 +107,8 @@ export const updateProduct = async (proId, data) => {
     }
 }
 
+// CART PART
+// Delete cart items
 export const deleteCartItemsByID = async (itemId) => {
     try {
         const res = await axios.delete("http://localhost:4000/deleteCartItems/" + itemId);
@@ -106,6 +118,7 @@ export const deleteCartItemsByID = async (itemId) => {
     }
 }
 
+// Save new cart items
 export const saveNewCartItem = async (data) => {
     try {
         const res = axios.post(`${baseUrl}addToCart`, {...data});
@@ -115,6 +128,7 @@ export const saveNewCartItem = async (data) => {
     }
 }
 
+// Get one cart item
 export const getOneCartItems = async (userId, proId) => {
     try {
         const res = await axios.get(`${baseUrl}getOneCartItem`, {params: {userId: userId, proId: proId}});
@@ -124,6 +138,7 @@ export const getOneCartItems = async (userId, proId) => {
     }
 }
 
+// Edit cart item
 export const updateCartItem = async (itemId, data) => {
     try {
         const res = axios.put(`${baseUrl}editCartItem/${itemId}`, {...data});
@@ -133,6 +148,7 @@ export const updateCartItem = async (itemId, data) => {
     }
 }
 
+// Check valid quantity in cart
 export const checkQuantity = async (userId) => {
     try {
         const res = axios.put(`${baseUrl}checkQuantity/${userId}`);
@@ -142,6 +158,8 @@ export const checkQuantity = async (userId) => {
     }
 }
 
+//Order
+// delete order
 export const deleteOrderByID = async (userId) => {
     try {
         const res = await axios.delete("http://localhost:4000/deleteOrder/" + userId);

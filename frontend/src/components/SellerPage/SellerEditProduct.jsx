@@ -20,13 +20,10 @@ export default function SellerEditProduct() {
         width: 0,
         height: 0,
         category: '',
-      })
-    
-
+    })
     const navigate = useNavigate()
 
     useEffect(() => {
-        // getUser()
         fetchCategories()
         getOneProduct(productId).then(res => {
             setProduct({
@@ -43,35 +40,26 @@ export default function SellerEditProduct() {
         })
     }, []);
 
+    // Get all categories
     function fetchCategories() {
         getAllCates().then(res => {
           setCategories(res.cate)
         })
     }
 
-    function fetchProduct() {
-        fetch(`http://localhost:4000/product`)
-          .then((res) => res.json())
-          .then((data) => {
-            setProducts(data);
-          });
-    }
-
+    // Handle editting changes
     const handleChange = ({ currentTarget: input }) => {
         setProduct( { ...product, [input.name]: input.value });
-      };
+    };
 
-    const config = {
-        headers: {
-            "Content-Type": "multipart/form-data"
-        }
-    }
-      const saveProduct = async (e) => {
+    // Save new product information
+    const saveProduct = async (e) => {
         e.preventDefault();
         updateProduct(productId, product)
         navigate(`/seller/${id}/products`);
     }
 
+    // Get all ancestor properties to edit
     const propertiesToFill = []
     if (categories.length > 0 && product.category) {
         let selCate = categories.find(({_id}) => _id === product.category)
@@ -84,6 +72,7 @@ export default function SellerEditProduct() {
         }
     }
     
+    // Save properties to product infor
     function setProductProps(propName, value) {
         setProductProperties(prev => {
             const newProductProps = {...prev};
@@ -167,72 +156,8 @@ export default function SellerEditProduct() {
                         <label for="height" class="form-label">Product height</label>
                         <input type="number" class="form-control" id="height" placeholder="Enter height" name='height' value={product.height} onChange={handleChange} />
                     </div>
-                    {/* <button type="button" class="actionBtn" onClick={saveProduct}>Check</button> */}
+
                     <button type="submit" class="actionBtn">Submit</button>
-                </form>
-            </div>
-        </div>
-    )
-    return (
-        <div className="products">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="titlepage">
-                            <h2>Edit Product</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="inputForm">
-                <form>
-                    <div class="mb-3">
-                        <label for="cartegory">Choose a cartegory:  </label>
-                        <select name="cartegory" id="cartegory">
-                            <option value="E-devices">E-devices</option>
-                            <option value="Cloth">Cloth</option>
-                            <option value="Car">Car</option>
-                            <option value="Toy">Toy</option>
-                        </select>
-                    </div>
-                    
-
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="productName" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productDes" class="form-label">Product Description</label>
-                        <input type="text" class="form-control" id="productDes" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productPrice" class="form-label">Product Price</label>
-                        <input type="number" class="form-control" id="productPrice" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productImage" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="productImage" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productLength" class="form-label">Product length</label>
-                        <input type="number" class="form-control" id="productLength" placeholder="Enter length" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productWidth" class="form-label">Product width</label>
-                        <input type="number" class="form-control" id="productWidth" placeholder="Enter width" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="productHeight" class="form-label">Product height</label>
-                        <input type="number" class="form-control" id="productHeight" placeholder="Enter height" />
-                    </div>
-                    <button type="submit" class="actionBtn">Update</button>
                 </form>
             </div>
         </div>

@@ -9,9 +9,11 @@ const PlaceOrder = () => {
     const [userId, setUserId] = useState(
         JSON.parse(sessionStorage.getItem("user")).id
     );
+
     useEffect(() => {
         getUser()
     }, [])
+
     function getUser() {
         axios.get("http://localhost:4000")
         .then(res => {
@@ -21,10 +23,11 @@ const PlaceOrder = () => {
         })
     }
 
+    // Accept delivery order and update to database
     async function acceptDelivery (uId) {
         try {
             const res = axios.put(`http://localhost:4000/acceptOrder/${uId}`);
-            deleteOrderByID(uId)
+            deleteOrderByID(uId).then(res => alert("Your order is accepted!"))
             navigate("/")
             return (await res).data;
         } catch (error) {
@@ -32,10 +35,11 @@ const PlaceOrder = () => {
         }
     }
 
+    // Reject delivery order and update to database
     async function rejectDelivery (uId) {
         try {
             const res = axios.put(`http://localhost:4000/rejectOrder/${uId}`);
-            deleteOrderByID(uId)
+            deleteOrderByID(uId).then(res => alert("Your order is rejected!"))
             navigate("/")
             return (await res).data;
         } catch (error) {

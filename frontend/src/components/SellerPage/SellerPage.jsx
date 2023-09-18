@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import SideBar from "../Layout/SideBar";
 import { useParams } from "react-router-dom";
 
 export default function SellerPage() {
@@ -45,7 +44,6 @@ export default function SellerPage() {
                     ))}
                 </div>
             </div>
-
         </div>  
     )
 }

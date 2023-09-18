@@ -6,7 +6,6 @@ import { withSwal } from 'react-sweetalert2';
 function CategoryList({swal})  {
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,12 +15,14 @@ function CategoryList({swal})  {
     })
   }, [])
 
+  //Get all categories
   function fetchCategories() {
     getAllCates().then(res => {
       setCategories(res.cate)
     })
   }
 
+  // Get all products
   function fetchProduct() {
     fetch(`http://localhost:4000/product`)
       .then((res) => res.json())
@@ -30,6 +31,7 @@ function CategoryList({swal})  {
       });
   }
 
+  // Check id a category is able to be editing
   function ableToModify(cate) {
     const childProducts =  products.filter(p => p.category === cate._id)
     if(childProducts.length > 0) {
@@ -39,6 +41,7 @@ function CategoryList({swal})  {
     }
   }
 
+  // Updateing a category
   function updateCate(cate) {
     if (ableToModify(cate)) {
       navigate(`/admin/editCategory/${cate._id}`)
@@ -51,6 +54,7 @@ function CategoryList({swal})  {
     }
   }
 
+  // Delete a cate
   function deleteCate(cate) {
     if (ableToModify(cate)) {
       swal.fire({
@@ -91,7 +95,6 @@ function CategoryList({swal})  {
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">Id</th>
               <th scope="col">Name</th>
               <th scope="col">Parent Category</th>
               <th scope="col">Actions</th>
@@ -100,14 +103,12 @@ function CategoryList({swal})  {
           <tbody>
             {categories.length > 0 && categories.map(cate => (
               <tr>
-                <th scope="row">1</th>
                 <td>{cate.name}</td>
                 <td>{cate?.parent?.name}</td>
                 <td>
-                  {/* <NavLink to={"/admin/editCategory/" + cate._id}> */}
-                    <button type="button" class="actionBtn editBtn" onClick={() => updateCate(cate)} >
-                      Edit
-                    </button>
+                  <button type="button" class="actionBtn editBtn" onClick={() => updateCate(cate)} >
+                    Edit
+                  </button>
 
                   <button type="button" class="actionBtn deleteBtn" onClick={() => deleteCate(cate)}>
                     Delete

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
-import { getAllCates, getOneCartItems, getProductByCate, saveNewCartItem, updateCartItem } from '../../api/app';
+import { getAllCates, getOneCartItems, saveNewCartItem, updateCartItem } from '../../api/app';
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const CustomerPage = () => {
     var imageBasePath = window.location.protocol + "//" + window.location.host + "/images/";
-    const [cateId, setCateId] = useState("")
     const [order, setOrders] = useState({
         productId: 0,
         quantity: 1,
@@ -14,10 +13,8 @@ const CustomerPage = () => {
     })
 
     const [products, setProducts] = useState([])
-
     const [categories, setCategories] = useState([])
-    const [category, setCategory] = useState('')
-    const [search, setSearch] = useState('')
+    // Filtering data
     const [dataParams, setDataPrams] = useState({
         category: '',
         search: '',
@@ -25,9 +22,7 @@ const CustomerPage = () => {
         sort: '',
     })
     const [cartItems, setCartItems] = useState([]);
-
     const [auth, setAuth] = useState(false)
-    const [msg, setMsg] = useState('')
     const [userId, setUserId] = useState(JSON.parse(sessionStorage.getItem("user"))?.id || 0)
     const [name, setName] = useState('')
     const [role, setRole] = useState('')
@@ -50,7 +45,8 @@ const CustomerPage = () => {
         browserProduct()
     }, [dataParams]);
     
-      function fetchUser() {
+    // Check user login and store infor to session storage
+    function fetchUser() {
         axios.get("http://localhost:4000")
         .then(res => {
             if(res.data.Status === "Success") {
@@ -63,11 +59,12 @@ const CustomerPage = () => {
                 sessionStorage.removeItem("user");
                 sessionStorage.removeItem("cart");
                 setAuth(false)
-                setMsg(res.data.Error)
             }
         })
         .then(err => console.log(err))
     }
+
+    // Get all products
     function fetchProduct() {
         fetch(`http://localhost:4000/product`)
         .then((res) => res.json())
@@ -75,12 +72,15 @@ const CustomerPage = () => {
           setProducts(data);
         });
     } 
+
+    // Get all categories
     function fetchCategories() {
         getAllCates().then(res => {
             setCategories(res.cate)
         })
     }
 
+    // Get all cart items
     function fecthCartItems() {
         axios.get('http://localhost:4000/cart', {params: {id: userId}})
         .then((res) => {
@@ -88,11 +88,7 @@ const CustomerPage = () => {
         })
     }
 
-    const config = {
-        headers: {
-            "Content-Type": 'multipart/form-data'
-        }
-    }
+    // Add product to cart
     const add = (id) => {
         let item = {productId: id, quantity: 1, customerId: userId}
         setOrders({
@@ -104,18 +100,21 @@ const CustomerPage = () => {
             if (res.length > 0) {
                 item.quantity = res[0].quantity + 1
                 updateCartItem(res[0].id, item)
-        fecthCartItems()
+                fecthCartItems()
             } else {
                 saveNewCartItem(item)
                 fecthCartItems()
             }
+            alert("Successfully add product to cart!")
         })
     }
 
+    // Handle filter options changes
     const handleChange = ({ currentTarget: input }) => {
         setDataPrams( { ...dataParams, [input.name]: input.value });
     };
 
+    // Get all products with filtering options
     const browserProduct = () => {
         axios.get('http://localhost:4000/filteredData', {params: dataParams})
         .then((res) => {
@@ -136,14 +135,13 @@ const CustomerPage = () => {
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <form class="form-inline my-2 my-lg-0 w-100">
                                 <input class="form-control mr-sm-2 border-0 rounded w-100" style={{backgroundColor: "#F3F9FB"}} type="search" placeholder="Search" aria-label="Search" name="search" value={dataParams.search} onChange={handleChange} />
-                                {/* <button class="btn btn-outline-blue my-2 my-sm-0" type="submit">Search</button> */}
                             </form>
 
                             <div class="col-3 d-flex justify-content-center align-items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person text-primary m-2" viewBox="0 0 16 16">
                                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
                                 </svg>
-                                {name}
+                                {name.toUpperCase()}
                             </div>
                             <NavLink to={'/cart'} class="col-3 d-flex justify-content-right align-items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart text-primary m-2" viewBox="0 0 16 16">
@@ -156,7 +154,6 @@ const CustomerPage = () => {
                         {
                             auth ? 
                             <div>
-                                {/* <h3>You are authorized {name} Role: {role} Id: {userId}</h3> */}
                                 <button className="btn btn-danger m-2" onClick={handleLogout}>Logout</button>
                                 {
                                     role === "seller" && (
@@ -176,7 +173,6 @@ const CustomerPage = () => {
                             </div>
                             :
                             <div>
-                                {/* <h3>{msg}</h3> */}
                                 <Link to="/login" className="btn btn-primary">Login</Link>
                             </div>
                         }
@@ -213,14 +209,6 @@ const CustomerPage = () => {
                                 <option value="cheapest">Cheapest Product</option>
                                 <option value="expensive">Most Expensive Product</option>
                             </select>
-                            {/* {categories && categories.map(cate => (
-                                <button type="button" class="btn btn-outline-info">{cate.name}
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                                    </svg>
-                                </button>
-                            ))} */}
-                            {/* <input type="button" onClick={() => browserProduct()} value='Browser' class="btn btn-primary" /> */}
                         </div>
                     </div>
                 </div>

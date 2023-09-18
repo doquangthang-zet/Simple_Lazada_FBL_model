@@ -21,6 +21,7 @@ export default function WarehouseList() {
     });
   }, []);
 
+  //Delete warehouse
   const handleDelete = async (id) => {
     try {
       await axios

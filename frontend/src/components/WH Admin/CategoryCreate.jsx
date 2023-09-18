@@ -21,6 +21,7 @@ export default function CategoryCreate() {
     })
   }
 
+  // Create new category
   function saveCategory() {
     const data = {
       name: cateName,
@@ -32,12 +33,14 @@ export default function CategoryCreate() {
     navigate("/admin/category");
   }
 
+  // Add new property
   function addProperty() {
     setProperties(prev => {
       return [...prev, {name:'', type:'', required: false}]
     })
   }
 
+  // Handle properties changes
   function handlePropertyNameChange(index, prop, newName) {
     setProperties(prev => {
       const properties = [...prev];
@@ -46,6 +49,7 @@ export default function CategoryCreate() {
     })
   }
 
+  // Handle properties type change
   function handlePropertyTypeChange(index, prop, newType) {
     setProperties(prev => {
       const properties = [...prev];
@@ -54,6 +58,7 @@ export default function CategoryCreate() {
     })
   }
 
+  // Handle properties require changes
   function handlePropertyRequireChange(index, prop, newRequire) {
     setProperties(prev => {
       const properties = [...prev];
@@ -62,13 +67,14 @@ export default function CategoryCreate() {
     })
   }
 
-   function removeProp(indexToRemove) {
+  // Remve properties
+  function removeProp(indexToRemove) {
     setProperties(prev => {
       return [...prev].filter((p, pi) => {
         return pi !== indexToRemove;
       });
     })
-   }
+  }
 
   return (
     <div className="products">

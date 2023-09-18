@@ -85,9 +85,9 @@ insert into warehouse(wName, address, volume) values
 ("WB", "30 Group 7 stress, database ward, rmit province", 150000);
 
 insert into product values 
-(1, "Samsung", "Galaxy Y", "logo192.png", 1000, 0.9, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
-(2, "Iphone", "14Pro", "logo192.png", 1500, 0.5, 1, 1, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35"),
-(3, "Oppo", "neo 5", "logo192.png", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39");
+(1, "Samsung", "Galaxy Y", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1000, 0.9, 1, 1, "64f95624880a0a5b708de026", '{"Brand": "Samsung", "Color":"red", "Weight":"2"}', 4, "2023-09-08 12:46:30"),
+(2, "Iphone", "14Pro", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 0.5, 1, 1, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:35"),
+(3, "Oppo", "neo 5", "image-1694334658666.iphone-14-pro-model-unselect-gallery-2-202209.jpg", 1500, 2, 2, 2, "64f95624880a0a5b708de026", '{"Weight":"2"}', 4, "2023-09-08 12:46:39");
 
 insert into product_inventory(product_id, warehouse_id, quantity, total_volume) values 
 (1, 2, 200, 180),
@@ -492,7 +492,6 @@ drop user if exists 'admin'@'localhost';
 create user 'admin'@'localhost' identified by 'admin';
 
 ALTER USER 'admin'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
-show databases;
 
 drop role if exists admin_role;
 create role admin_role;
@@ -523,7 +522,6 @@ drop user if exists 'seller'@'localhost';
 create user 'seller'@'localhost' identified by 'seller';
 
 ALTER USER 'seller'@'localhost' IDENTIFIED WITH mysql_native_password BY 'seller';
-show databases;
 
 drop role if exists seller_role;
 create role seller_role;
@@ -543,7 +541,6 @@ drop user if exists 'customer'@'localhost';
 create user 'customer'@'localhost' identified by 'customer';
 
 ALTER USER 'customer'@'localhost' IDENTIFIED WITH mysql_native_password BY 'customer';
-show databases;
 
 drop role if exists customer_role;
 create role customer_role;
@@ -554,4 +551,3 @@ grant select, insert, update, delete on lazada.cart_items to customer_role;
 grant customer_role to 'customer'@'localhost';
 set default role 'customer_role'@'%' to 'customer'@'localhost';
 flush privileges;
-
